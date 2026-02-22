@@ -944,14 +944,14 @@ def new_version(new=False):
 @cache_function(cache_duration(360))
 def remote_version():
 
-    # url = 'https://raw.githubusercontent.com/Twilight0/repository.twilight0/master/_zips/addons.xml'
-    # xml = net_client().http_GET(url).content
-    # 
-    # version = parseDOM(xml, 'addon', attrs={'id': control.addonInfo('id')}, ret='version')[0]
-    # 
-    # version = int(version.replace('.', ''))
+    url = 'https://raw.githubusercontent.com/Twilight0/repository.twilight0/refs/heads/master/repo_dir/plugin.video.alivegr/addon.xml'
+    xml = net_client().http_GET(url).content
 
-    return 200
+    version = parseDOM(xml, 'addon', attrs={'id': control.addonInfo('id')}, ret='version')[0]
+
+    version = int(version.replace('.', ''))
+
+    return version
 
 
 def rename_history_csv():
