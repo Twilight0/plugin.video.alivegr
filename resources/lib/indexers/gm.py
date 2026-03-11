@@ -13,7 +13,7 @@ import random
 from ast import literal_eval as evaluate
 
 from tulip import directory, control, parsers, cleantitle
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.compat import urljoin, urlparse, range, iteritems, py2_uni
 from tulip.utils import list_divider
 from tulip.parsers import parseDOM
@@ -33,7 +33,7 @@ def root(url):
     root_list = []
     groups_list = []
 
-    html = net_client().http_GET(url).content
+    html = net_client(ssl_verify=False).http_GET(url).content
 
     if url == SPORTS:
 
@@ -284,7 +284,7 @@ class Indexer:
 
             for content in self.years:
                 links = GM_BASE + url.rpartition('/')[2].partition('&')[0] + '&' + content
-                htmls = py2_uni(net_client().http_GET(links).content)
+                htmls = py2_uni(net_client(ssl_verify=False).http_GET(links).content)
                 self.data.append(htmls)
 
             result = u''.join(self.data)
@@ -294,9 +294,9 @@ class Indexer:
         else:
 
             if post:
-                html = net_client().http_POST(url, form_data=post).content
+                html = net_client(ssl_verify=False).http_POST(url, form_data=post).content
             else:
-                html = net_client().http_GET(url).content
+                html = net_client(ssl_verify=False).http_GET(url).content
 
             content = parseDOM(html, 'div', attrs={'class': 'col-xs-6 col-sm-4 col-md-3'})
 
@@ -400,7 +400,7 @@ class Indexer:
     @cache_method(cache_duration(720))
     def epeisodia(self, url):
 
-        html = net_client().http_GET(url).content
+        html = net_client(ssl_verify=False).http_GET(url).content
         image = parseDOM(html, 'img', attrs={'class': 'thumbnail.*?'}, ret='src')[0]
         image = urljoin(GM_BASE, image)
         try:
@@ -541,7 +541,7 @@ class Indexer:
     @cache_method(cache_duration(720))
     def event_list(self, url):
 
-        html = net_client().http_GET(url).content
+        html = net_client(ssl_verify=False).http_GET(url).content
         items = parseDOM(html, 'div', attrs={'style': 'margin-bottom: 10px'})
 
         for item in items:
@@ -577,7 +577,7 @@ class Indexer:
     @cache_method(cache_duration(720))
     def persons_listing(self, url, post):
 
-        html = net_client().http_POST(url, form_data=post).content
+        html = net_client(ssl_verify=False).http_POST(url, form_data=post).content
 
         content = parseDOM(html, 'div', attrs={'style': 'margin-left:20px;'})[0]
 
@@ -622,11 +622,11 @@ def gm_source_maker(url):
 
     if 'episode' in url:
 
-        html = net_client().http_POST(url.partition('?')[0], form_data=url.partition('?')[2]).content
+        html = net_client(ssl_verify=False).http_POST(url.partition('?')[0], form_data=url.partition('?')[2]).content
 
     else:
 
-        html = net_client().http_GET(url).content
+        html = net_client(ssl_verify=False).http_GET(url).content
 
     html = py2_uni(html)
 

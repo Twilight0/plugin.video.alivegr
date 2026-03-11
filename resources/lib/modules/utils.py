@@ -13,7 +13,7 @@ import re
 import codecs
 import hashlib
 from tulip import control, cache, m3u8, directory, cleantitle
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.parsers import parseDOM
 from tulip.compat import parse_qsl, is_py3, urlparse, py2_uni
 from tulip.log import log_debug

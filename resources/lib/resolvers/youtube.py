@@ -9,7 +9,7 @@ import re
 import youtube_resolver
 from ..modules.constants import YT_URL, cache_function, cache_duration
 from tulip import control
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from ..modules.utils import stream_picker
 
 

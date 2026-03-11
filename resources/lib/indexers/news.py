@@ -7,7 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from tulip import control
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.init import syshandle, sysaddon
 from tulip.cleantitle import replaceHTMLCodes
 from tulip.parsers import parseDOM

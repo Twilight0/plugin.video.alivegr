@@ -8,7 +8,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 from tulip import control, directory
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.cleantitle import replaceHTMLCodes
 from tulip.parsers import parseDOM
 from tulip.init import syshandle, sysaddon
@@ -389,7 +389,7 @@ def gk_source_maker(link):
     year = re.search(r'(\d{4})', year).group(1)
     image = parseDOM(html, 'img', attrs={'itemprop': 'image'}, ret='src')[0]
     urls = [u for u in parseDOM(urls, 'a', ret='href')]
-    urls = [net_client().http_GET(u).get_url() for u in urls]
+    urls = [net_client(ssl_verify=False).http_GET(u).get_url() for u in urls]
 
     hosts = [''.join([control.lang(30015), urlsplit(url).netloc]) for url in urls]
 

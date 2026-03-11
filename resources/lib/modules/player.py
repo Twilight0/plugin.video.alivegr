@@ -16,7 +16,7 @@ from resolveurl.resolver import ResolverError
 from youtube_plugin.youtube.youtube_exceptions import YouTubeException
 from tulip import directory, control
 from tulip.log import log_debug
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.compat import urljoin, parse_qsl, urlencode, is_py2, urlparse, HTTPError
 from tulip.utils import percent
 from tulip.parsers import parseDOM
@@ -218,7 +218,7 @@ def gm_directory(url, params):
 
     for h, l in lists:
 
-        html = net_client().http_GET(l).content
+        html = net_client(ssl_verify=False).http_GET(l).content
         button = parseDOM(html, 'a', attrs={'role': 'button'}, ret='href')[0]
         image = parseDOM(html, 'img', attrs={'class': 'thumbnail img-responsive'}, ret='src')[0]
         image = urljoin(GM_BASE, image)

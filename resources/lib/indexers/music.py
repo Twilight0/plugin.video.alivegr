@@ -10,7 +10,7 @@ import json, re
 
 from tulip import control, directory
 from tulip.parsers import parseDOM
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.log import log_debug
 from tulip.compat import urljoin, iteritems
 from ..modules.themes import iconname

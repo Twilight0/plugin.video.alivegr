@@ -10,7 +10,7 @@ import re, json, codecs
 from datetime import datetime
 from base64 import b64decode
 from tulip import control, directory
-from tulip.net import Net as net_client
+from resolveurl.lib.net import Net as net_client
 from tulip.log import log_debug
 from tulip.compat import str, is_py3, py3_dec
 from tulip.utils import percent
