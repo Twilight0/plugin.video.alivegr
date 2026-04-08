@@ -1,10 +1,17 @@
-[COLOR green]2.13.X series[/COLOR] [I]18-02-2026 - 18-02-2026[/I]
++ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 08-04-2026[/I]
+- Update live TV section with new channels, fewer groups, and new remote source
+- Removed dependency for logos resource addon, logos are now pulled from a network source and cached locally
+- Major refactoring, removed legacy and compatibility code
+- Removed a lot of old and unused code and features, and simplified the overall structure of the addon
+- New artwork and icon theme (gemini)
+
+[======]
+
+[COLOR red]2.13.X series[/COLOR] [I]18-02-2026 - 18-02-2026[/I]
 - Too many changes to list, notable changes are:
 + Utilize m3u playlist temporarily for live streams (until a more permanent solution is implemented)
 + Fixed greek movies indexers (episodes and movies)
 + Remove obselete and least used features and folders
-
-[======]
 
 + [COLOR red]2.11.X series[/COLOR] [I]11-09-2022 - 15-04-2023[/I]
 

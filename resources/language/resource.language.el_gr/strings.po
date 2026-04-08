@@ -727,12 +727,12 @@ msgid "Regional"
 msgstr "Τοπικά"
 
 msgctxt "#30208"
-msgid "Thematic"
-msgstr "Θεματικά"
+msgid "Gemini"
+msgstr "Gemini"
 
 msgctxt "#30209"
-msgid "Editor's Choice"
-msgstr "Η επιλογές του συντάκτη"
+msgid ""
+msgstr ""
 
 msgctxt "#30210"
 msgid "Web TV"
@@ -979,8 +979,8 @@ msgid "Warning"
 msgstr "Ειδοποίηση"
 
 msgctxt "#30271"
-msgid "Pre-resolve streams"
-msgstr "Προ-επίλυση ροών"
+msgid "[COLOR blue]X Profile:[/COLOR]{0}[COLOR blue]x.com/TwilightZer0[/COLOR]"
+msgstr "[COLOR blue]Προφίλ X:[/COLOR]{0}[COLOR blue]x.com/TwilightZer0[/COLOR]"
 
 msgctxt "#30272"
 msgid "Inputstream Adaptive & RTMP addons"
@@ -1263,8 +1263,8 @@ msgid "[COLOR green]Run/install log uploader[/COLOR]"
 msgstr "[COLOR green]Εκτέλεση/εγκατάσταση αποφορτωτή του αρχείου καταγραφής[/COLOR]"
 
 msgctxt "#30342"
-msgid "AliveGR's movies"
-msgstr "Η ταινιοθήκη του AliveGR"
+msgid ""
+msgstr ""
 
 msgctxt "#30343"
 msgid "Random"

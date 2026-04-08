@@ -3,5 +3,5 @@
 \.vscode/*
 Alivegr.code-workspace
 \.pylintrc
-
 .env
+__pycache__/

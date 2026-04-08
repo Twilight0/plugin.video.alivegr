@@ -4,15 +4,14 @@
 # Author Twilight0
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
-from __future__ import absolute_import, unicode_literals
 
 import json
 
 from tulip.cleantitle import strip_accents
-from tulip.compat import iteritems
-from tulip.control import setting
+from tulip.utils import iteritems
+from tulip.kodi import setting
 from tulip import bookmarks, directory
-from tulip.log import log_debug
+from tulip.log import log
 from ..modules.themes import iconname
 
 
@@ -28,9 +27,9 @@ class Indexer:
 
         if not self.data:
 
-            log_debug('Bookmarks list is empty')
+            log('Bookmarks list is empty')
             na = [{'title': 30033, 'action':  None, 'icon': iconname('empty')}]
-            directory.add(na)
+            directory.builder(na)
 
         else:
 
@@ -52,4 +51,4 @@ class Indexer:
 
                 self.list.insert(0, clear_all)
 
-            directory.add(self.list)
+            directory.builder(self.list)

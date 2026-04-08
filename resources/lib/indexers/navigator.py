@@ -4,15 +4,15 @@
 # Author Twilight0
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
-from __future__ import absolute_import, unicode_literals
 
 import json
 
-from tulip import control, directory
-from tulip.compat import iteritems
-from tulip.log import log_debug
+from tulip import kodi, directory
+from tulip.utils import convert_to_bool
+from tulip.utils import iteritems
+from tulip.log import log
 from ..modules.themes import iconname
-from ..modules.utils import file_to_text, read_from_file, reset_idx as reset
+from ..modules.utils import read_from_file, reset_idx as reset
 from ..modules.constants import PLAYBACK_HISTORY
 
 
@@ -20,211 +20,187 @@ class Indexer:
 
     def __init__(self):
 
-        self.list = []; self.menu = []
+        self.list = []
+        self.menu = []
 
     def root(self):
 
-        log_debug("Opening up")
+        log("Opening up")
 
         self.list = [
             {
-                'title': control.lang(30001),
-                'action': 'live_m3u',
+                'title': kodi.i18n(30001),
+                'action': 'live_tv',
                 'icon': iconname('monitor'),
-                'boolean': control.setting('show_live') == 'true'
+                'show_item': kodi.setting('show_live') == 'true',
+                'isFolder': 'False' if kodi.setting('live_tv_mode') == '1' else 'True', 'isPlayable': 'False'
             }
-            # {
-            #     'title': control.lang(30001),
-            #     'action': 'live_tv',
-            #     'icon': iconname('monitor'),
-            #     'boolean': control.setting('show_live') == 'true'
-            # }
             # ,
             # {
-            #     'title': control.lang(30001),
+            #     'title': kodi.i18n(30001),
             #     'action': 'live_m3u',
             #     'icon': iconname('monitor'),
-            #     'boolean': control.setting('show_live') == 'false' and control.setting('show_m3u') == 'true'
+            #     'show_item': kodi.setting('show_live') == 'false' and kodi.setting('show_m3u') == 'true',
+            #     'isFolder': 'False' if kodi.setting('live_tv_mode') == '1' else 'True', 'isPlayable': 'False'
             # }
             # ,
             # {
-            #     'title': control.lang(30036),
+            #     'title': kodi.i18n(30036),
             #     'action': 'pvr_client',
             #     'icon': iconname('guide'),
-            #     'boolean': control.setting('show_pvr') == 'true',
-            #     'isFolder': 'False', 'isPlayable': 'False'
+            #     'show_item': kodi.setting('show_pvr') == 'true'
             # }
             # ,
             # {
-            #     'title': control.lang(30008),
+            #     'title': kodi.i18n(30008),
             #     'action': 'networks',
             #     'icon': iconname('networks'),
-            #     'boolean': control.setting('show_networks') == 'true'
+            #     'show_item': kodi.setting('show_networks') == 'true'
             # }
             # ,
             # {
-            #     'title': control.lang(30123),
+            #     'title': kodi.i18n(30123),
             #     'action': 'news',
             #     'icon': iconname('news'),
-            #     'boolean': control.setting('show_news') == 'true'
+            #     'show_item': kodi.setting('show_news') == 'true'
             # }
             ,
             {
-                'title': control.lang(30031),
+                'title': kodi.i18n(30031),
                 'action': 'movies',
                 'icon': iconname('movies'),
-                'boolean': control.setting('show_movies') == 'true'
+                'show_item': kodi.setting('show_movies') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30083),
+                'title': kodi.i18n(30083),
                 'action': 'short_films',
                 'icon': iconname('short'),
-                'boolean': control.setting('show_short_films') == 'true'
+                'show_item': kodi.setting('show_short_films') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30030),
+                'title': kodi.i18n(30030),
                 'action': 'series',
                 'icon': iconname('series'),
-                'boolean': control.setting('show_series') == 'true'
+                'show_item': kodi.setting('show_series') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30063),
+                'title': kodi.i18n(30063),
                 'action': 'shows',
                 'icon': iconname('shows'),
-                'boolean': control.setting('show_shows') == 'true'
+                'show_item': kodi.setting('show_shows') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30068),
+                'title': kodi.i18n(30068),
                 'action': 'theater',
                 'icon': iconname('theater'),
-                'boolean': control.setting('show_theater') == 'true'
+                'show_item': kodi.setting('show_theater') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30079),
+                'title': kodi.i18n(30079),
                 'action': 'listing',
                 'url': 'https://greek-movies.com/movies.php?g=6&y=&l=&p=',
                 'icon': iconname('documentaries'),
-                'boolean': control.setting('show_docs') == 'true'
+                'show_item': kodi.setting('show_docs') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
-            # ,
-            # {
-            #     'title': control.lang(30094),
-            #     'action': 'sports',
-            #     'icon': iconname('sports'),
-            #     'boolean': control.setting('show_sports') == 'true'
-            # }
             ,
+            # {
+            #     'title': kodi.i18n(30094),
+            #     'action': 'gm_sports',
+            #     'icon': iconname('sports'),
+            #     'show_item': kodi.setting('show_sports') == 'true',
+            #     'isFolder': 'True', 'isPlayable': 'False'
+            # }
+            # ,
             {
-                'title': control.lang(30032),
+                'title': kodi.i18n(30032),
                 'action': 'kids',
                 'icon': iconname('kids'),
-                'boolean': control.setting('show_kids') == 'true'
+                'show_item': kodi.setting('show_kids') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             # ,
             # {
-            #     'title': control.lang(30002),
+            #     'title': kodi.i18n(30002),
             #     'action': 'radio',
             #     'icon': iconname('radios'),
-            #     'boolean': control.setting('show_radio') == 'true'
-            # }
-            # ,
-            # {
-            #     'title': control.lang(30125),
-            #     'action': 'music',
-            #     'icon': iconname('music'),
-            #     'boolean': control.setting('show_music') == 'true'
+            #     'show_item': kodi.setting('show_radio') == 'true'
             # }
             ,
             {
-                'title': control.lang(30095).partition(' ')[0],
+                'title': kodi.i18n(30125),
+                'action': 'music',
+                'icon': iconname('music'),
+                'show_item': kodi.setting('show_music') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
+            }
+            ,
+            {
+                'title': kodi.i18n(30095).partition(' ')[0],
                 'action': 'search_index',
                 'icon': iconname('search'),
-                'boolean': control.setting('show_search') == 'true'
+                'show_item': kodi.setting('show_search') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30012),
+                'title': kodi.i18n(30012),
                 'action': 'playback_history',
                 'icon': iconname('history'),
-                'boolean': control.setting('show_history') == 'true'
+                'show_item': kodi.setting('show_history') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30055),
+                'title': kodi.i18n(30055),
                 'action': 'bookmarks',
                 'icon': iconname('bookmarks'),
-                'boolean': control.setting('show_bookmarks') == 'true'
+                'show_item': kodi.setting('show_bookmarks') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30137),
+                'title': kodi.i18n(30137),
                 'action': 'settings',
                 'icon': iconname('settings'),
-                'boolean': control.setting('show_settings') == 'true'
+                'show_item': kodi.setting('show_settings') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
             {
-                'title': control.lang(30288),
+                'title': kodi.i18n(30288),
                 'action': 'quit',
                 'icon': iconname('quit'),
-                'boolean': control.setting('show_quit') == 'true',
+                'show_item': kodi.setting('show_quit') == 'true',
                 'isFolder': 'False', 'isPlayable': 'False'
             }
         ]
 
-        self.menu = [i for i in self.list if i['boolean']]
+        self.list = [item for item in self.list if convert_to_bool(item['show_item'])]
 
-        for item in self.menu:
-
-            if item['action'] == 'live_tv' and control.setting('live_tv_mode') == '1':
-                item.update({'isFolder': 'False', 'isPlayable': 'False'})
-
-            refresh = {'title': 30054, 'query': {'action': 'refresh'}}
-            cache_clear = {'title': 30056, 'query': {'action': 'cache_clear'}}
-            reset_idx = {'title': 30134, 'query': {'action': 'reset_idx', 'query': 'force'}}
-            settings = {'title': 30011, 'query': {'action': 'openSettings'}}
-            go_to_audio = {'title': 30321, 'query': {'action': 'activate_other_addon', 'url': 'plugin.video.alivegr', 'query': 'audio'}}
-            tools = {'title': 30137, 'query': {'action': 'tools_menu'}}
-            ii_cm = {'title': 30255, 'query': {'action': 'call_info'}}
-            item.update({'cm': [ii_cm, refresh, cache_clear, reset_idx, settings, go_to_audio, tools]})
-
-        if control.setting('reset_idx') == 'true':
-            reset(notify=False)
-
-        directory.add(self.menu)
-
-    def audio(self):
-
-        self.list = [
-            {
-                'title': 30002,
-                'action': 'radio',
-                'icon': iconname('radios')
-            }
-            ,
-            {
-                'title': 30125,
-                'action': 'music',
-                'icon': iconname('music')
-            }
-        ]
+        refresh = {'title': 30054, 'query': {'action': 'refresh'}}
+        cache_clear = {'title': 30056, 'query': {'action': 'cache_clear'}}
+        reset_idx = {'title': 30134, 'query': {'action': 'reset_idx', 'query': 'force'}}
+        settings = {'title': 30011, 'query': {'action': 'openSettings'}}
+        go_to_audio = {'title': 30321, 'query': {'action': 'activate_other_addon', 'url': 'plugin.video.alivegr', 'query': 'audio'}}
+        tools = {'title': 30137, 'query': {'action': 'tools_menu'}}
+        ii_cm = {'title': 30255, 'query': {'action': 'call_info'}}
 
         for item in self.list:
 
-            refresh = {'title': 30054, 'query': {'action': 'refresh'}}
-            cache_clear = {'title': 30056, 'query': {'action': 'cache_clear'}}
-            reset_idx = {'title': 30134, 'query': {'action': 'reset_idx'}}
-            settings = {'title': 30011, 'query': {'action': 'openSettings'}}
-            tools = {'title': 30137, 'query': {'action': 'tools_menu'}}
+            item.update({'cm': [ii_cm, refresh, cache_clear, reset_idx, settings, go_to_audio, tools]})
 
-            item.update({'cm': [refresh, cache_clear, reset_idx, settings, tools]})
-
-        directory.add(self.list)
+        directory.builder(self.list)
 
     def playback_history(self):
 
@@ -233,7 +209,7 @@ class Indexer:
         if not lines:
 
             self.list = [{'title': 30110, 'action':  None, 'icon': iconname('empty')}]
-            directory.add(self.list)
+            directory.builder(self.list)
 
         else:
 
@@ -247,10 +223,10 @@ class Indexer:
                 clear_history_cm = {'title': 30471, 'query': {'action': 'clear_playback_history'}}
                 i.update({'cm': [bookmark_cm, remove_from_history_cm, clear_history_cm]})
 
-            directory.add(self.list)
+            directory.builder(self.list)
 
     def generic(self, query, content='videos'):
 
         self.list = json.loads(query)
 
-        directory.add(self.list, content=content)
+        directory.builder(self.list, content=content)

@@ -5,16 +5,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-from __future__ import absolute_import
 from sys import argv
-from .modules import utils, kodi, player
-from .indexers import (
-    navigator, settings, news, live, networks, gm, kids, sports, radios, music, bookmarks, search
+from urllib.parse import parse_qsl
+
+from resources.lib.modules import utils, helpers, player
+from resources.lib.indexers import (
+    navigator, settings, live, vod, kids, music, bookmarks, search
 )
-from .modules.constants import SEARCH_HISTORY, PLAYBACK_HISTORY
-from tulip.compat import parse_qsl
+from resources.lib.modules.constants import SEARCH_HISTORY, PLAYBACK_HISTORY
+
 from tulip.directory import run_builtin
-from tulip import control, bookmarks as bm
+from tulip import kodi, bookmarks as bm
 
 params = dict(parse_qsl(argv[2][1:]))
 content = params.get('content_type')
@@ -34,11 +35,8 @@ def route():
 
     elif content == 'audio':
 
-        navigator.Indexer().audio()
-
-    elif content == 'image':
-
-        news.Indexer().papers_index()
+        # music.Indexer().menu()
+        music.Indexer().gm_music()
 
     elif content == 'executable':
 
@@ -64,33 +62,21 @@ def route():
 
         live.Indexer().live_m3u()
 
-    elif action == 'pvr_client':
-
-        kodi.pvr_client(query)
-
-    elif action == 'networks':
-
-        networks.Indexer().networks()
-
-    elif action == 'news':
-
-        news.Indexer().news()
-
     elif action == 'movies':
 
-        gm.Indexer().movies()
+        vod.Indexer().movies()
 
     elif action == 'short_films':
 
-        gm.Indexer().short_films()
+        vod.Indexer().short_films()
 
     elif action == 'shows':
 
-        gm.Indexer().shows()
+        vod.Indexer().shows()
 
     elif action == 'series':
 
-        gm.Indexer().series()
+        vod.Indexer().series()
 
     elif action == 'kids':
 
@@ -102,55 +88,27 @@ def route():
 
     elif action == 'cartoon_series':
 
-        gm.Indexer().cartoons_series()
-
-    elif action == 'cartoon_collection':
-
-        kids.Indexer().cartoon_collection()
-
-    elif action == 'cartoon_various':
-
-        kids.Indexer().cartoon_various(url)
-
-    elif action == 'educational':
-
-        kids.Indexer().educational()
-
-    elif action == 'kids_songs':
-
-        kids.Indexer().kids_songs()
+        vod.Indexer().cartoons_series()
 
     elif action == 'listing':
 
-        gm.Indexer().listing(url)
+        vod.Indexer().listing(url)
 
     elif action == 'episodes':
 
-        gm.Indexer().episodes(url)
-
-    elif action == 'sports':
-
-        sports.Indexer().sports()
+        vod.Indexer().episodes(url)
 
     elif action == 'gm_sports':
 
-        gm.Indexer().gm_sports()
-
-    elif action == 'sports_news':
-
-        sports.Indexer().sports_news()
+        vod.Indexer().gm_sports()
 
     elif action == 'events':
 
-        gm.Indexer().events(url)
+        vod.Indexer().events(url)
 
     elif action == 'theater':
 
-        gm.Indexer().theater()
-
-    elif action == 'audio':
-
-        navigator.Indexer().audio()
+        vod.Indexer().theater()
 
     elif action == 'music':
 
@@ -176,29 +134,17 @@ def route():
 
         music.Indexer().songs_index(url, name)
 
-    elif action == 'mgreekz_index':
-
-        music.Indexer().mgreekz_index()
-
-    elif action == 'top50_list':
-
-        music.Indexer().top50_list(url)
+    # elif action == 'mgreekz_index':
+    #
+    #     music.Indexer().mgreekz_index()
+    #
+    # elif action == 'top50_list':
+    #
+    #     music.Indexer().top50_list(url)
 
     elif action == 'techno_choices':
 
         music.Indexer().techno_choices(url)
-
-    elif action == 'radio':
-
-        radios.Indexer().radio()
-
-    elif action == 'papers':
-
-        utils.papers()
-
-    elif action == 'papers_index':
-
-        news.Indexer().papers_index()
 
     elif action == 'addBookmark':
 
@@ -221,9 +167,9 @@ def route():
         bookmarks.Indexer().bookmarks()
 
     elif action == 'clear_bookmarks':
-        bm.clear('bookmark', withyes=True, label_yes_no=30311, file_=control.bookmarksFile, notify=False)
-        control.sleep(200)
-        control.refresh()
+        bm.clear('bookmark')
+        kodi.sleep(200)
+        kodi.refresh()
 
     elif action == 'playback_history':
 
@@ -268,13 +214,13 @@ def route():
 
     elif action == 'openSettings':
 
-        control.openSettings(query)
+        kodi.openSettings(query)
 
     elif action == 'other_addon_settings':
 
         utils.other_addon_settings(query)
 
-    elif action in ['play', 'play_resolved', 'play_skipped']:
+    elif action == 'play':
 
         player.player(url, params)
 
@@ -288,19 +234,11 @@ def route():
 
     elif action == 'vod_switcher':
 
-        gm.Indexer().vod_switcher(url)
-
-    elif action == 'papers_switcher':
-
-        news.Indexer().switcher()
+        vod.Indexer().vod_switcher(url)
 
     elif action == 'page_selector':
 
         utils.page_selector(query)
-
-    elif action == 'setup_iptv':
-
-        utils.setup_iptv()
 
     elif action == 'setup_various_keymaps':
 
@@ -352,7 +290,7 @@ def route():
 
     elif action == 'refresh':
 
-        control.refresh()
+        kodi.refresh()
 
     elif action == 'refresh_and_clear':
 
@@ -368,7 +306,7 @@ def route():
 
     elif action == 'isa_enable':
 
-        kodi.isa_enable()
+        helpers.isa_enable()
 
     elif action == 'isa_setup':
 
@@ -376,7 +314,7 @@ def route():
 
     elif action == 'rtmp_enable':
 
-        kodi.rtmp_enable()
+        helpers.rtmp_enable()
 
     elif action == 'changelog':
 
@@ -404,11 +342,11 @@ def route():
 
     elif action == 'open_link':
 
-        control.open_web_browser(url)
+        kodi.open_web_browser(url)
 
     elif action == 'force':
 
-        kodi.force()
+        kodi.update_repositories()
 
     elif action == 'dmca':
 
@@ -424,23 +362,15 @@ def route():
 
     elif action == 'lang_choice':
 
-        kodi.lang_choice()
-
-    elif action == 'toggle_alt':
-
-        utils.toggle_alt()
+        helpers.lang_choice()
 
     elif action == 'quit':
 
-        control.quit_kodi()
+        kodi.quit_kodi()
 
     elif action == 'global_settings':
 
         kodi.global_settings()
-
-    elif action == 'pvr_settings':
-
-        kodi.pvr_settings()
 
     elif action == 'activate_other_addon':
 
@@ -452,8 +382,8 @@ def route():
 
     elif action == 'kodi_log_upload':
 
-        kodi.log_upload()
+        helpers.log_upload()
 
-    elif action == 'apply_settings_xml':
-
-        utils.apply_settings_xml()
+if __name__ == '__main__':
+    utils.checkpoint()
+    route()

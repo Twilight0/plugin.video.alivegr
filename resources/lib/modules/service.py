@@ -5,85 +5,66 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-import os
-import sys
-import hashlib
 import xbmc
-from xbmcaddon import Addon
+import xbmcaddon
 
-if sys.version_info[0] == 3:
-    from xbmcvfs import translatePath
-else:
-    from xbmc import translatePath
-
-addon_id = 'plugin.video.alivegr'
-settings_path = 'special://home/addons/{}/resources/settings.xml'.format(addon_id)
-datapath = 'special://profile/addon_data/plugin.video.alivegr/'
-__addon__ = Addon(addon_id)
-monitor = xbmc.Monitor
-it_exists = os.path.exists
+__addon__ = 'plugin.video.alivegr'
 
 
-class WatchChanges(xbmc.Monitor):
-
-    def __init__( self):
-
-        xbmc.Monitor.__init__(self)
-
-    def action(self):
-
-        if xbmc.getInfoLabel('Container.PluginName') == addon_id:
-            xbmc.executebuiltin('Container.Refresh')
-
-    def onSettingsChanged(self):
-
-        self.action()
-
-
-class Daemon:
+class SettingsMonitor(xbmc.Monitor):
 
     def __init__(self):
 
-        self._service_setup()
+        super(SettingsMonitor, self).__init__()
+        self.addon = xbmcaddon.Addon(__addon__)
 
-    def _service_setup(self):
+    def onSettingsChanged(self):
 
-        self.Monitor = WatchChanges()
-        self._get_settings()
+        self.show_clear_bookmarks = self.addon.getSetting('show_clear_bookmarks')
+        self.paginate_items = self.addon.getSetting('paginate_items')
+        self.wrap_labels = self.addon.getSetting('wrap_labels')
+        self.lang_split = self.addon.getSetting('lang_split')
+        self.theme = self.addon.getSetting('theme')
+        self.show_live = self.addon.getSetting('show_live')
+        self.show_m3u = self.addon.getSetting('show_m3u')
+        # self.show_pvr = self.addon.getSetting('show_pvr')
+        # self.show_networks = self.addon.getSetting('show_networks')
+        # self.show_news = self.addon.getSetting('show_news')
+        self.show_movies = self.addon.getSetting('show_movies')
+        self.show_short_films = self.addon.getSetting('show_short_films')
+        self.show_series = self.addon.getSetting('show_series')
+        self.show_shows = self.addon.getSetting('show_shows')
+        self.show_theater = self.addon.getSetting('show_theater')
+        self.show_docs = self.addon.getSetting('show_docs')
+        self.show_sports = self.addon.getSetting('show_sports')
+        self.show_kids = self.addon.getSetting('show_kids')
+        self.show_misc = self.addon.getSetting('show_history')
+        # self.show_radio = self.addon.getSetting('show_radio')
+        self.show_music = self.addon.getSetting('show_music')
+        self.show_search = self.addon.getSetting('show_search')
+        self.show_bookmarks = self.addon.getSetting('show_bookmarks')
+        self.show_settings = self.addon.getSetting('show_settings')
+        self.show_quit = self.addon.getSetting('show_quit')
+        self.live_tv_mode = self.addon.getSetting('live_tv_mode')
+        self.show_live_switcher = self.addon.getSetting('show_live_switcher')
+        self.show_vod_switcher = self.addon.getSetting('show_vod_switcher')
+        self.show_pic_switcher = self.addon.getSetting('show_pic_switcher')
 
-    def _get_settings(self):
+        self.action()
 
-        self.show_clear_bookmarks = __addon__.getSetting('show_clear_bookmarks')
-        self.paginate_items = __addon__.getSetting('paginate_items')
-        self.wrap_labels = __addon__.getSetting('wrap_labels')
-        self.lang_split = __addon__.getSetting('lang_split')
-        self.theme = __addon__.getSetting('theme')
-        self.show_live = __addon__.getSetting('show_live')
-        self.show_m3u = __addon__.getSetting('show_m3u')
-        self.show_pvr = __addon__.getSetting('show_pvr')
-        self.show_networks = __addon__.getSetting('show_networks')
-        self.show_news = __addon__.getSetting('show_news')
-        self.show_movies = __addon__.getSetting('show_movies')
-        self.show_short_films = __addon__.getSetting('show_short_films')
-        self.show_series = __addon__.getSetting('show_series')
-        self.show_shows = __addon__.getSetting('show_shows')
-        self.show_theater = __addon__.getSetting('show_theater')
-        self.show_docs = __addon__.getSetting('show_docs')
-        self.show_sports = __addon__.getSetting('show_sports')
-        self.show_kids = __addon__.getSetting('show_kids')
-        self.show_misc = __addon__.getSetting('show_history')
-        self.show_radio = __addon__.getSetting('show_radio')
-        self.show_music = __addon__.getSetting('show_music')
-        self.show_search = __addon__.getSetting('show_search')
-        self.show_bookmarks = __addon__.getSetting('show_bookmarks')
-        self.show_settings = __addon__.getSetting('show_settings')
-        self.show_quit = __addon__.getSetting('show_quit')
-        self.live_tv_mode = __addon__.getSetting('live_tv_mode')
-        self.show_live_switcher = __addon__.getSetting('show_live_switcher')
-        self.show_vod_switcher = __addon__.getSetting('show_vod_switcher')
-        self.show_pic_switcher = __addon__.getSetting('show_pic_switcher')
+    @staticmethod
+    def action():
+
+        if __addon__ in xbmc.getInfoLabel('Container.PluginName'):
+            xbmc.executebuiltin('Container.Refresh')
 
 
 if __name__ == '__main__':
 
-    Daemon()
+    monitor = SettingsMonitor()
+
+    # Keep the script running until Kodi shuts down
+    while not monitor.abortRequested():
+        # Wait for 10 seconds or until abort is requested
+        if monitor.waitForAbort(10):
+            break

@@ -5,12 +5,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-from tulip.compat import OrderedDict, urljoin
-from tulip.control import dataPath, join, setting
-from tulip.cache import FunctionCache
+from collections import OrderedDict
+from urllib.parse import urljoin
+from tulip.kodi import dataPath, join, setting, cacheDirectory
+from pickled import FunctionCache
 
-cache_function = FunctionCache().cache_function
-cache_method = FunctionCache().cache_method
+cache_function = FunctionCache(cacheDirectory).cache_function
+cache_method = FunctionCache(cacheDirectory).cache_method
 
 ########################################################################################################################
 
@@ -32,29 +33,33 @@ TWITTER = 'https://x.com/TwilightZer0'
 PAYPAL = 'https://www.paypal.me/AliveGR'
 PATREON = 'https://www.patreon.com/twilight0'
 SUPPORT = 'https://github.com/Twilight0/plugin.video.alivegr/issues'
+FORUM = 'https://github.com/Twilight0/plugin.video.alivegr/discussions'
+
+########################################################################################################################
+
+M3U_LINK = 'https://raw.githubusercontent.com/komhsgr/m3u/refs/heads/main/Greekstreamtv.m3u'
 
 ########################################################################################################################
 
 GM_BASE = 'https://greek-movies.com/'
-MOVIES = urljoin(GM_BASE, 'movies.php')
-SHOWS = urljoin(GM_BASE, 'shows.php')
-SERIES = urljoin(GM_BASE, 'series.php')
-ANIMATION = urljoin(GM_BASE, 'animation.php')
-THEATER = urljoin(GM_BASE, 'theater.php')
-SPORTS = urljoin(GM_BASE, 'sports.php')
-SHORTFILMS = urljoin(GM_BASE, 'shortfilm.php')
-MUSIC = urljoin(GM_BASE, 'music.php')
-SEARCH = urljoin(GM_BASE, 'search.php')
-PERSON = urljoin(GM_BASE, 'person.php')
-EPISODE = urljoin(GM_BASE, 'ajax.php?type=episode&epid={0}&view={1}')
+GM_MOVIES = urljoin(GM_BASE, 'movies.php')
+GM_SHOWS = urljoin(GM_BASE, 'shows.php')
+GM_SERIES = urljoin(GM_BASE, 'series.php')
+GM_ANIMATION = urljoin(GM_BASE, 'animation.php')
+GM_THEATER = urljoin(GM_BASE, 'theater.php')
+GM_SPORTS = urljoin(GM_BASE, 'sports.php')
+GM_SHORTFILMS = urljoin(GM_BASE, 'shortfilm.php')
+GM_MUSIC = urljoin(GM_BASE, 'music.php')
+GM_SEARCH = urljoin(GM_BASE, 'search.php')
+GM_PERSON = urljoin(GM_BASE, 'person.php')
+GM_EPISODE = urljoin(GM_BASE, 'ajax.php?type=episode&epid={0}&view={1}')
 
 ########################################################################################################################
 
 LIVE_GROUPS = OrderedDict(
     [
         ('Panhellenic', 30201), ('Pancypriot', 30202), ('International', 30203), ('Regional', 30207),
-        ('Editors Choice', 30209), ('Music', 30125), ('Thematic', 30208), ('Cinema', 30205),
-        ('AliveGR Cinema', 30342), ('Kids', 30032), ('Sports', 30094), ('Web TV', 30210), ('Misc', 30206)
+        ('Music', 30125), ('Cinema', 30205), ('Kids', 30032), ('Sports', 30094), ('Web TV', 30210)
     ]
 )
 

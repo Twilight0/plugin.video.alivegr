@@ -5,21 +5,19 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-from __future__ import absolute_import, unicode_literals
-
 import os.path
 from os import rename
 import re
-import codecs
-import hashlib
-from tulip import control, cache, m3u8, directory, cleantitle
-from tulip.net import Net as net_client
-from tulip.parsers import parseDOM
-from tulip.compat import parse_qsl, is_py3, urlparse, py2_uni
-from tulip.log import log_debug
-from resources.lib.modules.themes import iconname
-from resources.lib.modules.constants import WEBSITE, PINNED, SEARCH_HISTORY, PLAYBACK_HISTORY, cache_duration
-from resources.lib.modules.kodi import force
+import m3u8
+import pickled
+from itertags import iwrapper
+from tulip import kodi, directory, cleantitle
+from netclient import Net
+from urllib.parse import parse_qsl, urlparse
+from tulip.log import log
+from .themes import iconname
+from .constants import WEBSITE, PINNED, SEARCH_HISTORY, PLAYBACK_HISTORY, cache_duration
+from tulip.kodi import update_repositories
 from os import path
 from time import time
 from base64 import b64decode
@@ -29,25 +27,14 @@ from scrapetube.wrapper import list_playlist_videos, list_playlists
 
 ########################################################################################################################
 
-iptv_folder = control.transPath('special://profile/addon_data/pvr.iptvsimple')
-m3u_url = 'https://raw.githubusercontent.com/free-greek-iptv/greek-iptv/master/android.m3u'
-epg_url = 'https://github.com/GreekTVApp/EPG-GRCY/releases/download/EPG/epg.xml.gz'
-
 leved = 'Q2dw5CchN3c39mck9ydhJ3L0VmbuI3ZlZXasF2LvoDc0RHa'
-reset_cache = cache.FunctionCache().reset_cache
-cache_function = cache.FunctionCache().cache_function
-
-
-def papers():
-
-    control.execute('Dialog.Close(all)')
-
-    control.execute('ActivateWindow(10002,"plugin://plugin.video.alivegr/?content_type=image",return)')
+reset_cache = pickled.FunctionCache(kodi.cacheDirectory).reset_cache
+cache_function = pickled.FunctionCache(kodi.cacheDirectory).cache_function
 
 
 def stream_picker(links):
 
-    _choice = control.selectDialog(heading=control.lang(30006), list=[link[0] for link in links])
+    _choice = kodi.selectDialog(heading=kodi.i18n(30006), list=[link[0] for link in links])
 
     if _choice <= len(links) and not _choice == -1:
         popped = [link[1] for link in links][_choice]
@@ -99,7 +86,7 @@ def m3u8_picker(url):
 
     if len(qualities) == 1:
 
-        control.infoDialog(control.lang(30220).format(qualities[0]))
+        kodi.infoDialog(kodi.i18n(30220).format(qualities[0]))
 
         return url
 
@@ -108,68 +95,9 @@ def m3u8_picker(url):
     return stream_picker(links)
 
 
-def toggle_alt():
-
-    if control.setting('show_alt_live') == 'true':
-        live_enability = '[COLOR green]' + control.lang(30330) + '[/COLOR]'
-    else:
-        live_enability = '[COLOR red]' + control.lang(30335) + '[/COLOR]'
-
-    if control.setting('show_alt_vod') == 'true':
-        vod_enability = '[COLOR green]' + control.lang(30330) + '[/COLOR]'
-    else:
-        vod_enability = '[COLOR red]' + control.lang(30335) + '[/COLOR]'
-
-    option = control.selectDialog(
-        [
-            control.lang(30317).format(live_enability), control.lang(30405).format(vod_enability)
-        ],
-        heading=': '.join([control.addonInfo('name'), control.lang(30350)])
-        )
-
-    if option == 0:
-
-        if control.setting('show_alt_live') == 'false':
-
-            yes = control.yesnoDialog(control.lang(30114))
-
-            if yes:
-
-                control.setSetting('show_alt_live', 'true')
-                control.infoDialog(message=control.lang(30402), time=1000)
-        else:
-
-            yes = control.yesnoDialog(control.lang(30404))
-
-            if yes:
-
-                control.setSetting('show_alt_live', 'false')
-                control.infoDialog(message=control.lang(30402), time=1000)
-
-    elif option == 1:
-
-        if control.setting('show_alt_vod') == 'false':
-
-            yes = control.yesnoDialog(control.lang(30114))
-
-            if yes:
-
-                control.setSetting('show_alt_vod', 'true')
-                control.infoDialog(message=control.lang(30402), time=1000)
-
-        else:
-
-            yes = control.yesnoDialog(control.lang(30404))
-
-            if yes:
-
-                control.setSetting('show_alt_vod', 'false')
-                control.infoDialog(message=control.lang(30402), time=1000)
-
-
 def i18n():
 
-    lang = 'el_GR' if 'Greek' in control.infoLabel('System.Language') else 'en_GB'
+    lang = 'el_GR' if 'Greek' in kodi.infoLabel('System.Language') else 'en_GB'
 
     return lang
 
@@ -190,7 +118,7 @@ def other_addon_settings(query):
 
         else:
 
-            control.openSettings(id='{0}'.format(query))
+            kodi.openSettings('{0}'.format(query))
     except Exception:
 
         pass
@@ -198,19 +126,19 @@ def other_addon_settings(query):
 
 def reset_idx(notify=True, forceit=False):
 
-    if control.setting('reset_idx') == 'true' or forceit:
+    if kodi.setting('reset_idx') == 'true' or forceit:
 
-        if control.setting('reset_live') == 'true' or forceit:
+        if kodi.setting('reset_live') == 'true' or forceit:
 
-            control.setSetting('live_group', '0')
+            kodi.setSetting('live_group', '0')
 
-        control.setSetting('vod_group', '30213')
-        control.setSetting('papers_group', '0')
+        kodi.setSetting('vod_group', '30213')
+        kodi.setSetting('papers_group', '0')
 
         if notify:
-            control.infoDialog(message=control.lang(30402), time=3000)
+            kodi.infoDialog(message=kodi.i18n(30402), time=3000)
 
-        log_debug('Indexers have been reset')
+        log('Indexers have been reset')
 
 
 def activate_other_addon(url, query=None):
@@ -220,8 +148,8 @@ def activate_other_addon(url, query=None):
 
     parsed = urlparse(url)
 
-    if not control.condVisibility('System.HasAddon({0})'.format(parsed.netloc)):
-        control.execute('InstallAddon({0})'.format(parsed.netloc))
+    if not kodi.condVisibility('System.HasAddon({0})'.format(parsed.netloc)):
+        kodi.execute('InstallAddon({0})'.format(parsed.netloc))
 
     params = dict(parse_qsl(parsed.query))
     action = params.get('action')
@@ -232,76 +160,76 @@ def activate_other_addon(url, query=None):
 
 def cache_clear(notify=True):
 
-    log_debug('Cache has been cleared')
-    reset_cache(notify=notify)
+    log('Cache has been cleared')
+    reset_cache()
 
 
 def purge_bookmarks():
 
-    if path.exists(control.bookmarksFile):
-        if control.yesnoDialog(line1=control.lang(30214)):
-            control.deleteFile(control.bookmarksFile)
-            control.infoDialog(control.lang(30402))
+    if path.exists(kodi.bookmarksFile):
+        if kodi.yesnoDialog(line1=kodi.i18n(30214)):
+            kodi.deleteFile(kodi.bookmarksFile)
+            kodi.infoDialog(kodi.i18n(30402))
         else:
-            control.infoDialog(control.lang(30403))
+            kodi.infoDialog(kodi.i18n(30403))
     else:
-        control.infoDialog(control.lang(30139))
+        kodi.infoDialog(kodi.i18n(30139))
 
 
 def clear_search_history():
 
     if path.exists(SEARCH_HISTORY):
-        if control.yesnoDialog(line1=control.lang(30484).format(path.basename(SEARCH_HISTORY))):
-            control.deleteFile(SEARCH_HISTORY)
-            control.infoDialog(control.lang(30402))
-            control.refresh()
+        if kodi.yesnoDialog(line1=kodi.i18n(30484).format(path.basename(SEARCH_HISTORY))):
+            kodi.deleteFile(SEARCH_HISTORY)
+            kodi.infoDialog(kodi.i18n(30402))
+            kodi.refresh()
         else:
-            control.infoDialog(control.lang(30403))
+            kodi.infoDialog(kodi.i18n(30403))
     else:
-        control.infoDialog(control.lang(30347))
+        kodi.infoDialog(kodi.i18n(30347))
 
 
 def clear_playback_history():
 
     if path.exists(PLAYBACK_HISTORY):
-        if control.yesnoDialog(line1=control.lang(30484).format(path.basename(PLAYBACK_HISTORY))):
-            control.deleteFile(PLAYBACK_HISTORY)
-            control.infoDialog(control.lang(30402))
-            control.refresh()
+        if kodi.yesnoDialog(line1=kodi.i18n(30484).format(path.basename(PLAYBACK_HISTORY))):
+            kodi.deleteFile(PLAYBACK_HISTORY)
+            kodi.infoDialog(kodi.i18n(30402))
+            kodi.refresh()
         else:
-            control.infoDialog(control.lang(30403))
+            kodi.infoDialog(kodi.i18n(30403))
     else:
-        control.infoDialog(control.lang(30347))
+        kodi.infoDialog(kodi.i18n(30347))
 
 
 def tools_menu():
 
-    control.execute('Dialog.Close(all)')
+    kodi.execute('Dialog.Close(all)')
 
-    control.execute('ActivateWindow(programs,"plugin://plugin.video.alivegr/?content_type=executable",return)')
+    kodi.execute('ActivateWindow(programs,"plugin://plugin.video.alivegr/?content_type=executable",return)')
 
 
 def call_info():
 
-    control.close_all()
+    kodi.close_all()
 
-    control.execute('ActivateWindow(programs,"plugin://plugin.video.alivegr/?content_type=executable&action=info",return)')
+    kodi.execute('ActivateWindow(programs,"plugin://plugin.video.alivegr/?content_type=executable&action=info",return)')
 
 
 def greeting():
 
-    control.infoDialog(control.lang(30263))
+    kodi.infoDialog(kodi.i18n(30263))
 
 
 def refresh():
 
-    control.refresh()
+    kodi.refresh()
 
 
 def refresh_and_clear():
 
     cache_clear()
-    control.sleep(100)
+    kodi.sleep(100)
     refresh()
 
 
@@ -332,13 +260,13 @@ def xteni(s):
 
 def geo_loc():
 
-    json_obj = net_client().http_GET('https://extreme-ip-lookup.com/json/').get_json()
+    json_obj = Net().http_GET('https://extreme-ip-lookup.com/json/').get_json()
 
     if not json_obj or 'error' in json_obj:
-        json_obj = net_client().http_GET('https://ip-api.com/json/').get_json()
+        json_obj = Net().http_GET('https://ip-api.com/json/').get_json()
 
     if not json_obj or 'error' in json_obj:
-        json_obj = net_client().http_GET('https://geoip.siliconweb.com/geo.json').get_json()
+        json_obj = Net().http_GET('https://geoip.siliconweb.com/geo.json').get_json()
 
     country = json_obj.get('country', 'Worldwide')
 
@@ -347,8 +275,8 @@ def geo_loc():
 
 def pin_to_file(file_, txt):
 
-    if not control.exists(file_):
-        control.makeFiles(control.dataPath)
+    if not kodi.exists(file_):
+        kodi.makeFiles(kodi.dataPath)
 
     if not txt:
         return
@@ -361,7 +289,7 @@ def pin_to_file(file_, txt):
 
 def pinned_from_file(file_):
 
-    if control.exists(file_):
+    if kodi.exists(file_):
 
         with open(file_, 'r') as f:
             text = [i.rstrip('\n') for i in f.readlines()][::-1]
@@ -390,65 +318,43 @@ def unpin_from_file(file_, txt):
 
 def pin(query):
 
-    control.busy()
+    kodi.busy()
 
-    # title = control.infoLabel('ListItem.Title')
+    # title = kodi.infoLabel('ListItem.Title')
     # pin_to_file(PINNED, title)
     pin_to_file(PINNED, query)
 
-    control.infoDialog(control.lang(30338), time=750)
+    kodi.infoDialog(kodi.i18n(30338), time=750)
 
-    control.idle()
+    kodi.idle()
 
 
 def unpin(query):
 
-    control.busy()
+    kodi.busy()
 
-    # title = control.infoLabel('ListItem.Title')
+    # title = kodi.infoLabel('ListItem.Title')
     # unpin_from_file(PINNED, title)
     unpin_from_file(PINNED, query)
 
-    control.sleep(100)
-    control.refresh()
+    kodi.sleep(100)
+    kodi.refresh()
 
-    control.infoDialog(control.lang(30338), time=750)
+    kodi.infoDialog(kodi.i18n(30338), time=750)
 
-    control.idle()
-
-
-def setup_iptv():
-
-    try:
-        enabled = control.addon_details('pvr.iptvsimple')['enabled']
-    except Exception:
-        enabled = None
-
-    if not enabled:
-
-        control.okDialog(heading='AliveGR', line1=control.lang(30166))
-
-        return
-
-    else:
-
-        control.addon('pvr.iptvsimple').setSetting('m3uUrl', m3u_url)
-        control.addon('pvr.iptvsimple').setSetting('epgUrl', epg_url)
-        control.addon('pvr.iptvsimple').setSetting('m3uCache', 'false')
-
-        control.okDialog(heading=control.lang(30402), line1=control.lang(30107))
+    kodi.idle()
 
 
 def setup_various_keymaps(keymap):
 
-    keymap_settings_folder = control.transPath('special://profile/keymaps')
+    keymap_settings_folder = kodi.transPath('special://profile/keymaps')
 
     if not path.exists(keymap_settings_folder):
-        control.makeFile(keymap_settings_folder)
+        kodi.makeFile(keymap_settings_folder)
 
     if keymap == 'previous':
 
-        location = control.join(keymap_settings_folder, 'alivegr_tvguide.xml')
+        location = kodi.join(keymap_settings_folder, 'alivegr_tvguide.xml')
 
         lang_int = 30022
 
@@ -473,7 +379,7 @@ def setup_various_keymaps(keymap):
 
     elif keymap == 'mouse':
 
-        location = control.transPath(control.join('special://profile', 'keymaps', 'alivegr_mouse.xml'))
+        location = kodi.transPath(kodi.join('special://profile', 'keymaps', 'alivegr_mouse.xml'))
 
         lang_int = 30238
 
@@ -492,23 +398,23 @@ def setup_various_keymaps(keymap):
                 string_for_up, string_for_down
             ]
 
-            map_left = control.lang(30241)
-            map_right = control.lang(30242)
-            map_middle = control.lang(30243)
-            map_up = control.lang(30244)
-            map_down = control.lang(30245)
+            map_left = kodi.i18n(30241)
+            map_right = kodi.i18n(30242)
+            map_middle = kodi.i18n(30243)
+            map_up = kodi.i18n(30244)
+            map_down = kodi.i18n(30245)
 
             keys = [
                 map_left, map_right, map_middle, map_up, map_down
             ]
 
-            control.okDialog(control.name(), control.lang(30240))
+            kodi.okDialog(kodi.name(), kodi.i18n(30240))
 
-            indices = control.dialog.multiselect(control.name(), keys)
+            indices = kodi.dialog.multiselect(kodi.name(), keys)
 
             if not indices:
 
-                control.infoDialog(control.lang(30246))
+                kodi.infoDialog(kodi.i18n(30246))
 
             else:
 
@@ -524,7 +430,7 @@ def setup_various_keymaps(keymap):
                 with open(location, 'w') as f:
                     f.write(to_write)
 
-                control.execute('Action(reloadkeymaps)')
+                kodi.execute('Action(reloadkeymaps)')
 
     elif keymap == 'samsung':
 
@@ -546,7 +452,7 @@ def setup_various_keymaps(keymap):
     </visualisation>
 </keymap>'''
 
-        location = control.join(keymap_settings_folder, 'samsung.xml')
+        location = kodi.join(keymap_settings_folder, 'samsung.xml')
 
         lang_int = 30022
 
@@ -576,7 +482,7 @@ def setup_various_keymaps(keymap):
     </visualisation>
 </keymap>'''
 
-        location = control.join(keymap_settings_folder, 'stop_playback.xml')
+        location = kodi.join(keymap_settings_folder, 'stop_playback.xml')
 
         lang_int = 30022
 
@@ -585,44 +491,44 @@ def setup_various_keymaps(keymap):
             with open(location, 'w') as f:
                 f.write(string)
 
-    yes = control.yesnoDialog(control.lang(lang_int))
+    yes = kodi.yesnoDialog(kodi.i18n(lang_int))
 
     if yes:
 
         if path.exists(location):
 
-            choices = [control.lang(30248), control.lang(30249)]
+            choices = [kodi.i18n(30248), kodi.i18n(30249)]
 
-            _choice = control.selectDialog(choices, heading=control.lang(30247))
+            _choice = kodi.selectDialog(choices, heading=kodi.i18n(30247))
 
             if _choice == 0:
 
                 seq()
-                control.okDialog(control.name(), control.lang(30027) + ', ' + (control.lang(30028)))
-                control.infoDialog(control.lang(30402))
-                control.execute('Action(reloadkeymaps)')
+                kodi.okDialog(kodi.name(), kodi.i18n(30027) + ', ' + (kodi.i18n(30028)))
+                kodi.infoDialog(kodi.i18n(30402))
+                kodi.execute('Action(reloadkeymaps)')
 
             elif _choice == 1:
 
-                control.deleteFile(location)
-                control.infoDialog(control.lang(30402))
-                control.execute('Action(reloadkeymaps)')
+                kodi.deleteFile(location)
+                kodi.infoDialog(kodi.i18n(30402))
+                kodi.execute('Action(reloadkeymaps)')
 
             else:
 
-                control.infoDialog(control.lang(30403))
+                kodi.infoDialog(kodi.i18n(30403))
 
         else:
 
             seq()
-            control.okDialog(control.name(), control.lang(30027) + ', ' + (control.lang(30028)))
-            control.infoDialog(control.lang(30402))
+            kodi.okDialog(kodi.name(), kodi.i18n(30027) + ', ' + (kodi.i18n(30028)))
+            kodi.infoDialog(kodi.i18n(30402))
 
-            control.execute('Action(reloadkeymaps)')
+            kodi.execute('Action(reloadkeymaps)')
 
     else:
 
-        control.infoDialog(control.lang(30403))
+        kodi.infoDialog(kodi.i18n(30403))
 
 
 def isa_setup():
@@ -648,39 +554,39 @@ def isa_setup():
 
         for line in lines:
 
-            control.addon('inputstream.adaptive').setSetting(
+            kodi.addon('inputstream.adaptive').setSetting(
                 re.search(r'id="(\w+)"', line).group(1), re.search(r'>([\w/:]+)<', line).group(1)
             )
 
-    if control.yesnoDialog(line1=control.lang(30022)):
+    if kodi.yesnoDialog(line1=kodi.i18n(30022)):
 
         wizard()
-        control.infoDialog(message=control.lang(30402), time=3000)
+        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
 
 
 def yt_setup():
 
     def wizard():
 
-        control.addon('plugin.video.youtube').setSetting('kodion.setup_wizard', 'false')
-        control.addon('plugin.video.youtube').setSetting('youtube.language', 'el')
-        control.addon('plugin.video.youtube').setSetting('youtube.region', 'GR')
-        control.infoDialog(message=control.lang(30402), time=3000)
+        kodi.addon('plugin.video.youtube').setSetting('kodion.setup_wizard', 'false')
+        kodi.addon('plugin.video.youtube').setSetting('youtube.language', 'el')
+        kodi.addon('plugin.video.youtube').setSetting('youtube.region', 'GR')
+        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
 
     def yt_mpd():
 
-        control.addon('plugin.video.youtube').setSetting('kodion.video.quality.mpd', 'true')
-        control.addon('plugin.video.youtube').setSetting('kodion.mpd.videos', 'true')
-        control.addon('plugin.video.youtube').setSetting('kodion.mpd.live_streams', 'true')
-        control.infoDialog(message=control.lang(30402), time=3000)
+        kodi.addon('plugin.video.youtube').setSetting('kodion.video.quality.mpd', 'true')
+        kodi.addon('plugin.video.youtube').setSetting('kodion.mpd.videos', 'true')
+        kodi.addon('plugin.video.youtube').setSetting('kodion.mpd.live_streams', 'true')
+        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
 
 ########################################################################################################################
 
-    if control.yesnoDialog(line1=control.lang(30132)):
+    if kodi.yesnoDialog(line1=kodi.i18n(30132)):
 
         wizard()
 
-    if control.condVisibility('System.HasAddon(inputstream.adaptive)') and control.yesnoDialog(line1=control.lang(30287)):
+    if kodi.condVisibility('System.HasAddon(inputstream.adaptive)') and kodi.yesnoDialog(line1=kodi.i18n(30287)):
 
         yt_mpd()
 
@@ -705,12 +611,9 @@ def file_to_text(file_):
 
 def trim_content(f):
 
-    history_size = int(control.setting('history_size'))
+    history_size = int(kodi.setting('history_size'))
 
-    if is_py3:
-        file_ = open(f, 'r', encoding='utf-8')
-    else:
-        file_ = codecs.open(f, 'r', encoding='utf-8')
+    file_ = open(f, 'r', encoding='utf-8')
 
     text = [i.rstrip('\n') for i in file_.readlines()][::-1]
 
@@ -718,10 +621,7 @@ def trim_content(f):
 
     if len(text) > history_size:
 
-        if is_py3:
-            file_ = open(f, 'w', encoding='utf-8')
-        else:
-            file_ = codecs.open(f, 'w', encoding='utf-8')
+        file_ = open(f, 'w', encoding='utf-8')
 
         dif = history_size - len(text)
         result = text[:dif][::-1]
@@ -736,27 +636,17 @@ def add_to_file(f, text, trim_file=True):
 
     try:
 
-        if is_py3:
-            file_ = open(f, 'r', encoding='utf-8')
-            if text + '\n' in file_.readlines():
-                return
-            else:
-                pass
+        file_ = open(f, 'r', encoding='utf-8')
+        if text + '\n' in file_.readlines():
+            return
         else:
-            file_ = codecs.open(f, 'r', encoding='utf-8')
-            if py2_uni(text) + '\n' in file_.readlines():
-                return
-            else:
-                pass
+            pass
         file_.close()
 
     except IOError:
-        log_debug('File {0} does not exist, creating new...'.format(os.path.basename(f)))
+        log('File {0} does not exist, creating new...'.format(os.path.basename(f)))
 
-    if is_py3:
-        file_ = open(f, 'a', encoding='utf-8')
-    else:
-        file_ = codecs.open(f, 'a', encoding='utf-8')
+    file_ = open(f, 'a', encoding='utf-8')
 
     file_.writelines(text + '\n')
     file_.close()
@@ -766,35 +656,28 @@ def add_to_file(f, text, trim_file=True):
 
 def process_file(f, text, mode='remove'):
 
-    if is_py3:
-        file_ = open(f, 'r', encoding='utf-8')
-    else:
-        file_ = codecs.open(f, 'r', encoding='utf-8')
+    file_ = open(f, 'r', encoding='utf-8')
 
     lines = file_.readlines()
     file_.close()
 
-    if py2_uni(text) + '\n' in lines:
+    if text + '\n' in lines:
         if mode == 'change':
-            idx = lines.index(py2_uni(text) + '\n')
-            search_type, _, search_term = py2_uni(lines[idx].strip('\n').partition(','))
-            str_input = control.inputDialog(heading=control.lang(30445), default=search_term)
-            str_input = cleantitle.strip_accents(py2_uni(str_input))
+            idx = lines.index(text + '\n')
+            search_type, _, search_term = lines[idx].strip('\n').partition(',')
+            str_input = kodi.inputDialog(heading=kodi.i18n(30445), default=search_term)
+            str_input = cleantitle.strip_accents(str_input)
             lines[idx] = ','.join([search_type, str_input]) + '\n'
         else:
-            lines.remove(py2_uni(text) + '\n')
+            lines.remove(text + '\n')
     else:
         return
 
-    if is_py3:
-        file_ = open(f, 'w', encoding='utf-8')
-    else:
-        file_ = codecs.open(f, 'w', encoding='utf-8')
-
+    file_ = open(f, 'w', encoding='utf-8')
     file_.write(''.join(lines))
     file_.close()
 
-    control.refresh()
+    kodi.refresh()
 
 
 def read_from_file(f):
@@ -804,12 +687,9 @@ def read_from_file(f):
     :return: List
     """
 
-    if control.exists(f):
+    if kodi.exists(f):
 
-        if is_py3:
-            file_ = open(f, 'r', encoding='utf-8')
-        else:
-            file_ = codecs.open(f, 'r', encoding='utf-8')
+        file_ = open(f, 'r', encoding='utf-8')
         text = [i.rstrip('\n') for i in file_.readlines()][::-1]
 
         file_.close()
@@ -823,106 +703,106 @@ def read_from_file(f):
 
 def changelog(get_text=False):
 
-    if control.setting('changelog_lang') == '0' and 'Greek' in control.infoLabel('System.Language'):
+    if kodi.setting('changelog_lang') == '0' and 'Greek' in kodi.infoLabel('System.Language'):
         change_txt = 'changelog.el.txt'
     elif (
-            control.setting('changelog_lang') == '0' and 'Greek' not in control.infoLabel('System.Language')
-    ) or control.setting('changelog_lang') == '1':
+            kodi.setting('changelog_lang') == '0' and 'Greek' not in kodi.infoLabel('System.Language')
+    ) or kodi.setting('changelog_lang') == '1':
         change_txt = 'changelog.en.txt'
     else:
         change_txt = 'changelog.el.txt'
 
-    change_txt = control.join(control.addonPath, 'resources', 'texts', change_txt)
+    change_txt = kodi.join(kodi.addonPath, 'resources', 'texts', change_txt)
 
     if get_text:
-        return py2_uni(file_to_text(change_txt)).partition(u'\n\n')[0]
+        return file_to_text(change_txt).partition(u'\n\n')[0]
     else:
-        control.dialog.textviewer(control.addonInfo('name') + ', ' + control.lang(30110), file_to_text(change_txt))
+        kodi.dialog.textviewer(kodi.addonInfo('name') + ', ' + kodi.i18n(30110), file_to_text(change_txt))
 
 
 def dmca():
 
-    location = control.join(
-        control.transPath(control.addonInfo('path')), 'resources', 'texts', 'dmca_{0}.txt'.format(i18n())
+    location = kodi.join(
+        kodi.transPath(kodi.addonInfo('path')), 'resources', 'texts', 'dmca_{0}.txt'.format(i18n())
     )
 
-    control.dialog.textviewer(control.addonInfo('name'), file_to_text(location))
+    kodi.dialog.textviewer(kodi.addonInfo('name'), file_to_text(location))
 
 
 def pp():
 
-    location = control.join(
-        control.transPath(control.addonInfo('path')), 'resources', 'texts', 'pp_{0}.txt'.format(i18n())
+    location = kodi.join(
+        kodi.transPath(kodi.addonInfo('path')), 'resources', 'texts', 'pp_{0}.txt'.format(i18n())
     )
 
-    control.dialog.textviewer(control.addonInfo('name'), file_to_text(location))
+    kodi.dialog.textviewer(kodi.addonInfo('name'), file_to_text(location))
 
 
 def disclaimer():
 
     try:
-        text = control.addonInfo('disclaimer').decode('utf-8')
+        text = kodi.addonInfo('disclaimer').decode('utf-8')
     except (UnicodeEncodeError, UnicodeDecodeError, AttributeError):
-        text = control.addonInfo('disclaimer')
+        text = kodi.addonInfo('disclaimer')
 
-    control.dialog.textviewer(control.addonInfo('name') + ', ' + control.lang(30129), text)
+    kodi.dialog.textviewer(kodi.addonInfo('name') + ', ' + kodi.i18n(30129), text)
 
 
 def do_not_ask_again():
 
-    control.setSetting('new_version_prompt', 'false')
+    kodi.setSetting('new_version_prompt', 'false')
 
-    control.okDialog('AliveGR', control.lang(30361))
+    kodi.okDialog('AliveGR', kodi.i18n(30361))
 
 
 def prompt():
 
-    control.okDialog('AliveGR', control.lang(30356).format(remote_version()))
+    kodi.okDialog('AliveGR', kodi.i18n(30356).format(remote_version()))
 
-    choices = [control.lang(30357), control.lang(30358), control.lang(30359)]
+    choices = [kodi.i18n(30357), kodi.i18n(30358), kodi.i18n(30359)]
 
-    _choice = control.selectDialog(choices, heading=control.lang(30482))
+    _choice = kodi.selectDialog(choices, heading=kodi.i18n(30482))
 
     if _choice == 0:
-        force()
+        update_repositories()
     elif _choice == 1:
-        control.close_all()
+        kodi.close_all()
     elif _choice == 2:
         do_not_ask_again()
 
 
 def welcome():
 
-    choices = [control.lang(30329), control.lang(30340), control.lang(30129), control.lang(30333)]
+    choices = [kodi.i18n(30329), kodi.i18n(30340), kodi.i18n(30129), kodi.i18n(30333)]
 
-    _choice = control.selectDialog(choices, heading=control.lang(30267).format(control.version()))
+    _choice = kodi.selectDialog(choices, heading=kodi.i18n(30267).format(kodi.version()))
 
     if _choice in [0, -1]:
-        control.close_all()
+        kodi.close_all()
     elif _choice == 1:
         changelog()
     elif _choice == 2:
         disclaimer()
     elif _choice == 3:
-        control.open_web_browser(WEBSITE)
+        kodi.open_web_browser(WEBSITE)
 
 
 def new_version(new=False):
 
-    version_file = control.join(control.dataPath, 'version.txt')
+    version_file = kodi.join(kodi.dataPath, 'version.txt')
 
     if not path.exists(version_file) or new:
 
-        if not path.exists(control.dataPath):
+        if not path.exists(kodi.dataPath):
 
-            control.makeFile(control.dataPath)
+            kodi.makeFile(kodi.dataPath)
 
         try:
             with open(version_file, mode='w', encoding='utf-8') as f:
-                f.write(control.version())
+                f.write(kodi.version())
         except Exception:
             with open(version_file, 'w') as f:
-                f.write(control.version())
+                f.write(kodi.version())
 
         return True
 
@@ -935,7 +815,7 @@ def new_version(new=False):
             with open(version_file) as f:
                 version = f.read()
 
-        if version != control.version():
+        if version != kodi.version():
             return new_version(new=True)
         else:
             return False
@@ -945,9 +825,9 @@ def new_version(new=False):
 def remote_version():
 
     url = 'https://raw.githubusercontent.com/Twilight0/repository.twilight0/refs/heads/master/repo_dir/plugin.video.alivegr/addon.xml'
-    xml = net_client().http_GET(url).content
+    xml = Net().http_GET(url).content
 
-    version = parseDOM(xml, 'addon', attrs={'id': control.addonInfo('id')}, ret='version')[0]
+    version = iwrapper(xml, 'addon', attrs={'id': kodi.addonInfo('id')}, ret='version').__next__()
 
     version = int(version.replace('.', ''))
 
@@ -957,7 +837,7 @@ def remote_version():
 def rename_history_csv():
 
     try:
-        if not control.exists(SEARCH_HISTORY):
+        if not kodi.exists(SEARCH_HISTORY):
             rename(SEARCH_HISTORY.replace('search_', ''), SEARCH_HISTORY)
     except Exception:
         pass
@@ -968,7 +848,7 @@ def checkpoint():
     check = time() + 10800
 
     try:
-        new_version_prompt = control.setting('new_version_prompt') == 'true' and remote_version() > int(control.version().replace('.', ''))
+        new_version_prompt = kodi.setting('new_version_prompt') == 'true' and remote_version() > int(kodi.version().replace('.', ''))
     except ValueError:  # will fail if version install is alpha or beta
         new_version_prompt = False
 
@@ -976,83 +856,83 @@ def checkpoint():
 
     if new_version():
 
-        # if control.yesnoDialog(control.lang(30267)):
+        # if kodi.yesnoDialog(kodi.i18n(30267)):
         #     changelog()
         welcome()
 
         cache_clear(notify=False)
         reset_idx(notify=False)
 
-        if control.setting('debug') == 'true':
+        if kodi.setting('debug') == 'true':
 
-            log_debug(
+            log(
                 'Debug settings have been reset, please do not touch these settings manually,'
                 ' they are *only* meant to help developer test various aspects.'
             )
 
-            control.setSetting('debug', 'false')
+            kodi.setSetting('debug', 'false')
 
-        control.setSetting('last_check', str(check))
+        kodi.setSetting('last_check', str(check))
 
-    elif new_version_prompt and time() > float(control.setting('last_check')):
+    elif new_version_prompt and time() > float(kodi.setting('last_check')):
 
         prompt()
-        control.setSetting('last_check', str(check))
+        kodi.setSetting('last_check', str(check))
 
 
 def dev():
 
-    if control.setting('debug') == 'false':
+    if kodi.setting('debug') == 'false':
 
-        dwp = control.dialog.input(
-            'I hope you know what you\'re doing!', type=control.password_input, option=control.verify
+        dwp = kodi.dialog.input(
+            'I hope you know what you\'re doing!', type=kodi.password_input, option=kodi.verify
         )
 
-        text = net_client().http_GET(thgiliwt('=' + leved)).content
+        text = '1234'
 
         if text == dwp:
 
-            control.setSetting('debug', 'true')
+            kodi.setSetting('debug', 'true')
 
-            cache.clear(withyes=False)
+            reset_cache()
 
         else:
 
-            control.infoDialog('Without proper password, debug/developer mode won\'t work', time=4000)
-            control.execute('ActivateWindow(home)')
+            kodi.infoDialog('Without proper password, debug/developer mode won\'t work', time=4000)
+            kodi.execute('ActivateWindow(home)')
 
-    elif control.setting('debug') == 'true':
+    elif kodi.setting('debug') == 'true':
 
-        control.setSetting('debug', 'false')
+        kodi.setSetting('debug', 'false')
 
 
 def page_selector(query):
 
-    pages = [control.lang(30415).format(i) for i in list(range(1, int(query) + 1))]
+    pages = [kodi.i18n(30415).format(i) for i in list(range(1, int(query) + 1))]
 
-    _choice = control.selectDialog(pages, heading=control.lang(30416))
+    _choice = kodi.selectDialog(pages, heading=kodi.i18n(30416))
 
     if _choice != -1:
 
-        control.setSetting('page', str(_choice))
-        control.sleep(200)
-        control.refresh()
+        kodi.setSetting('page', str(_choice))
+        kodi.sleep(200)
+        kodi.refresh()
 
-        if control.setting('pagination_reset') == 'true':
+        if kodi.setting('pagination_reset') == 'true':
             # wait a second in order to ensure container is first loaded then reset the page
-            control.sleep(1000)
-            control.setSetting('page', '0')
+            kodi.sleep(1000)
+            kodi.setSetting('page', '0')
 
 
 def page_menu(pages, reset=False):
 
     if not reset:
-        index = str(int(control.setting('page')) + 1)
+        index = str(int(kodi.setting('page')) + 1)
     else:
         index = '1'
 
     menu = {
-        'title': control.lang(30414).format(index),
+        'title': kodi.i18n(30414).format(index),
         'action': 'page_selector',
         'query': str(pages),
         'icon': iconname('switcher'),
@@ -1061,50 +941,6 @@ def page_menu(pages, reset=False):
     }
 
     return menu
-
-
-def apply_settings_xml():
-
-    new_settings = 'special://home/addons/{}/resources/texts/matrix_settings.xml'.format(control.addonInfo('id'))
-    old_settings = 'special://home/addons/{}/resources/texts/leia_settings.xml'.format(control.addonInfo('id'))
-    settings_path = 'special://home/addons/{}/resources/settings.xml'.format(control.addonInfo('id'))
-
-    with open(control.transPath(settings_path)) as settings_f:
-
-        text = settings_f.read()
-
-        try:
-            md5sum = hashlib.md5(text).hexdigest()
-        except TypeError:
-            md5sum = hashlib.md5(bytes(text, encoding='utf-8')).hexdigest()
-
-        if md5sum == 'ede0024610bda958e525b095b061c6bf':
-
-            if is_py3:
-
-                new_f = open(control.transPath(new_settings))
-                settings_text = new_f.read()
-
-                with open(control.transPath(settings_path), 'w') as f:
-                    f.write(settings_text)
-
-                new_f.close()
-
-            else:
-
-                old_f = open(control.transPath(old_settings))
-                settings_text = old_f.read()
-
-                with open(control.transPath(settings_path), 'w') as f:
-                    f.write(settings_text)
-
-                old_f.close()
-
-            control.infoDialog(message=control.lang(30402), time=1000)
-
-        else:
-
-            control.infoDialog(message=control.lang(30300), time=3000)
 
 
 @cache_function(cache_duration(60))

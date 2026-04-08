@@ -727,11 +727,11 @@ msgid "Regional"
 msgstr ""
 
 msgctxt "#30208"
-msgid "Thematic"
+msgid "Gemini"
 msgstr ""
 
 msgctxt "#30209"
-msgid "Editor's Choice"
+msgid ""
 msgstr ""
 
 msgctxt "#30210"
@@ -979,7 +979,7 @@ msgid "Warning"
 msgstr ""
 
 msgctxt "#30271"
-msgid "Pre-resolve streams"
+msgid "[COLOR blue]X Profile:[/COLOR]{0}[COLOR blue]x.com/TwilightZer0[/COLOR]"
 msgstr ""
 
 msgctxt "#30272"
@@ -1263,7 +1263,7 @@ msgid "[COLOR green]Run/install log uploader[/COLOR]"
 msgstr ""
 
 msgctxt "#30342"
-msgid "AliveGR's movies"
+msgid ""
 msgstr ""
 
 msgctxt "#30343"

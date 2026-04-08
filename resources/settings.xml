@@ -1,15 +1,16 @@
 <?xml version="1.0" ?>
-<settings version="1">
+<settings version="2">
 	<section id="plugin.video.alivegr">
 		<category id="appearance" label="30003" help="30430">
 			<group id="1" label="">
 				<setting id="theme" type="integer" label="30102" help="30420">
 					<level>0</level>
-					<default>0</default>
+					<default>2</default>
 					<constraints>
 						<options>
 							<option label="30103">0</option>
 							<option label="30104">1</option>
+							<option label="30208">2</option>
 						</options>
 					</constraints>
 					<control type="spinner" format="string"/>
@@ -160,21 +161,21 @@
 					</dependencies>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_pvr" type="boolean" label="30149" help="">
-					<level>0</level>
-					<default>false</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="show_networks" type="boolean" label="30150" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="show_news" type="boolean" label="30151" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
+<!--				<setting id="show_pvr" type="boolean" label="30149" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>false</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
+<!--				<setting id="show_networks" type="boolean" label="30150" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>true</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
+<!--				<setting id="show_news" type="boolean" label="30151" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>true</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
 				<setting id="show_movies" type="boolean" label="30152" help="">
 					<level>0</level>
 					<default>true</default>
@@ -205,11 +206,11 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_sports" type="boolean" label="30158" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
+<!--				<setting id="show_sports" type="boolean" label="30158" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>true</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
 				<setting id="show_kids" type="boolean" label="30159" help="">
 					<level>0</level>
 					<default>true</default>
@@ -220,11 +221,11 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_radio" type="boolean" label="30162" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
+<!--				<setting id="show_radio" type="boolean" label="30162" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>true</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
 				<setting id="show_music" type="boolean" label="30161" help="">
 					<level>0</level>
 					<default>true</default>
@@ -253,18 +254,18 @@
 			</group>
 		</category>
 		<category id="streams" label="30004" help="30432">
-			<group id="1">
-				<setting id="toggle_alt" type="action" label="30046" help="30436">
-					<level>0</level>
-					<data>RunPlugin(plugin://plugin.video.alivegr/?action=toggle_alt)</data>
-					<constraints>
-						<allowempty>true</allowempty>
-					</constraints>
-					<control type="button" format="action">
-						<close>true</close>
-					</control>
-				</setting>
-			</group>
+<!--			<group id="1">-->
+<!--				<setting id="toggle_alt" type="action" label="30046" help="30436">-->
+<!--					<level>0</level>-->
+<!--					<data>RunPlugin(plugin://plugin.video.alivegr/?action=toggle_alt)</data>-->
+<!--					<constraints>-->
+<!--						<allowempty>true</allowempty>-->
+<!--					</constraints>-->
+<!--					<control type="button" format="action">-->
+<!--						<close>true</close>-->
+<!--					</control>-->
+<!--				</setting>-->
+<!--			</group>-->
 			<group id="2" label="30006">
 				<setting id="yt_quality_picker" type="integer" label="30251" help="30437">
 					<level>2</level>
@@ -307,8 +308,7 @@
 					</control>
 				</setting>
 			</group>
-			<group id="3"/>
-			<group id="4" label="30007">
+			<group id="3" label="30007">
 				<setting id="live_tv_mode" type="integer" label="30285" help="30440">
 					<level>3</level>
 					<default>0</default>
@@ -340,16 +340,12 @@
 							<option label="30202">2</option>
 							<option label="30203">3</option>
 							<option label="30207">4</option>
-							<option label="30209">5</option>
-							<option label="30125">6</option>
-							<option label="30208">7</option>
-							<option label="30205">8</option>
-							<option label="30342">9</option>
-							<option label="30032">10</option>
-							<option label="30094">11</option>
-							<option label="30210">12</option>
-							<option label="30206">13</option>
-							<option label="30282">14</option>
+							<option label="30125">5</option>
+							<option label="30205">6</option>
+							<option label="30032">7</option>
+							<option label="30094">8</option>
+							<option label="30210">9</option>
+							<option label="30282">10</option>
 						</options>
 					</constraints>
 					<dependencies>
@@ -364,26 +360,26 @@
 						<heading>30291</heading>
 					</control>
 				</setting>
-				<setting id="preresolve_streams" type="boolean" label="30271" help="30443">
-					<level>3</level>
-					<default>false</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="pseudo_live_mode" type="integer" label="30351" help="30450">
-					<level>3</level>
-					<default>1</default>
-					<constraints>
-						<options>
-							<option label="30352">0</option>
-							<option label="30353">1</option>
-						</options>
-					</constraints>
-					<control type="list" format="string">
-						<heading>30351</heading>
-					</control>
-				</setting>
+<!--				<setting id="preresolve_streams" type="boolean" label="30271" help="30443">-->
+<!--					<level>3</level>-->
+<!--					<default>false</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
+<!--				<setting id="pseudo_live_mode" type="integer" label="30351" help="30450">-->
+<!--					<level>3</level>-->
+<!--					<default>1</default>-->
+<!--					<constraints>-->
+<!--						<options>-->
+<!--							<option label="30352">0</option>-->
+<!--							<option label="30353">1</option>-->
+<!--						</options>-->
+<!--					</constraints>-->
+<!--					<control type="list" format="string">-->
+<!--						<heading>30351</heading>-->
+<!--					</control>-->
+<!--				</setting>-->
 			</group>
-			<group id="5" label="30009">
+			<group id="4" label="30009">
 				<setting id="action_type" type="integer" label="30144" help="30444">
 					<level>1</level>
 					<default>0</default>
@@ -391,7 +387,7 @@
 						<options>
 							<option label="30145">0</option>
 							<option label="30146">1</option>
-							<option label="30343">2</option>
+<!--							<option label="30343">2</option>-->
 						</options>
 					</constraints>
 					<control type="list" format="string">
@@ -400,7 +396,7 @@
 				</setting>
 				<setting id="check_streams" type="boolean" label="30297" help="30304">
 					<level>3</level>
-					<default>false</default>
+					<default>true</default>
 					<control type="toggle"/>
 				</setting>
 				<setting id="episodes_reverse" type="boolean" label="30043" help="30446">
@@ -413,14 +409,14 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_cartoons" type="boolean" label="30345" help="30448">
-					<level>1</level>
-					<default>false</default>
-					<control type="toggle"/>
-				</setting>
+<!--				<setting id="show_cartoons" type="boolean" label="30345" help="30448">-->
+<!--					<level>1</level>-->
+<!--					<default>false</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
 			</group>
-			<group id="7"/>
-			<group id="8" label="30298">
+			<group id="5"/>
+			<group id="6" label="30298">
 				<setting id="audio_only" type="boolean" label="30224" help="30449">
 					<level>3</level>
 					<default>false</default>
@@ -437,13 +433,13 @@
 					</control>
 				</setting>
 			</group>
-			<group id="9" label="30041">
-				<setting id="show_pic_switcher" type="boolean" label="30042" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-			</group>
+<!--			<group id="7" label="30041">-->
+<!--				<setting id="show_pic_switcher" type="boolean" label="30042" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>true</default>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
+<!--			</group>-->
 		</category>
 		<category id="maintenance" label="30138" help="30433">
 			<group id="1">
@@ -599,26 +595,26 @@
 					</dependencies>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_alt_live" type="boolean" label="Show alternative live streams" help="">
-					<level>0</level>
-					<default>false</default>
-					<dependencies>
-						<dependency type="visible">
-							<condition on="property" name="InfoBool">false</condition>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
-				<setting id="show_alt_vod" type="boolean" label="Show alternative vod streams" help="">
-					<level>0</level>
-					<default>false</default>
-					<dependencies>
-						<dependency type="visible">
-							<condition on="property" name="InfoBool">false</condition>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
+<!--				<setting id="show_alt_live" type="boolean" label="Show alternative live streams" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>false</default>-->
+<!--					<dependencies>-->
+<!--						<dependency type="visible">-->
+<!--							<condition on="property" name="InfoBool">false</condition>-->
+<!--						</dependency>-->
+<!--					</dependencies>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
+<!--				<setting id="show_alt_vod" type="boolean" label="Show alternative vod streams" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>false</default>-->
+<!--					<dependencies>-->
+<!--						<dependency type="visible">-->
+<!--							<condition on="property" name="InfoBool">false</condition>-->
+<!--						</dependency>-->
+<!--					</dependencies>-->
+<!--					<control type="toggle"/>-->
+<!--				</setting>-->
 				<setting id="vod_group" type="string" label="VOD Group" help="">
 					<level>0</level>
 					<default>30213</default>
@@ -631,18 +627,18 @@
 						<heading>VOD Group</heading>
 					</control>
 				</setting>
-				<setting id="papers_group" type="string" label="Papers Group" help="">
-					<level>0</level>
-					<default>0</default>
-					<dependencies>
-						<dependency type="visible">
-							<condition on="property" name="InfoBool">false</condition>
-						</dependency>
-					</dependencies>
-					<control type="edit" format="string">
-						<heading>Papers Group</heading>
-					</control>
-				</setting>
+<!--				<setting id="papers_group" type="string" label="Papers Group" help="">-->
+<!--					<level>0</level>-->
+<!--					<default>0</default>-->
+<!--					<dependencies>-->
+<!--						<dependency type="visible">-->
+<!--							<condition on="property" name="InfoBool">false</condition>-->
+<!--						</dependency>-->
+<!--					</dependencies>-->
+<!--					<control type="edit" format="string">-->
+<!--						<heading>Papers Group</heading>-->
+<!--					</control>-->
+<!--				</setting>-->
 				<setting id="last_check" type="string" label="Last update check" help="">
 					<level>0</level>
 					<default>0</default>
