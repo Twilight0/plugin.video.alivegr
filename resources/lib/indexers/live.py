@@ -5,11 +5,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-import re, json
+import re
+import json
+from urllib.parse import urlencode
 from datetime import datetime
 from tulip import kodi, directory
-# from tulip.log import log
 from netclient import Net
+from useragents import get_ua
 from tulip.utils import py3_dec
 from ..modules.utils import thgiliwt, pinned_from_file
 from ..modules.themes import iconname
@@ -84,6 +86,14 @@ class Indexer:
             url = channel['url']
             website = channel['website']
             info = channel['info']
+            headers = channel.get('headers')
+            if headers == 'random':
+                headers = {'User-Agent': get_ua(), 'Referer': 'https://www.greektv.live/'}
+            drm = channel.get('drm')
+            if drm:
+                if not isinstance(headers, dict):
+                    headers = {}
+                headers.update({'DRM': json.dumps(drm)})
 
             if len(info) == 5 and info[:5].isdigit():
                 info = kodi.i18n(int(info))
@@ -105,10 +115,15 @@ class Indexer:
 
             data = (
                 {
-                    'title': title, 'image': image, 'group': str(group), 'url': url[0],
+                    'title': title, 'image': image, 'group': str(group),
                     'genre': kodi.i18n(group), 'plot': info, 'website': website
                 }
             )
+
+            if headers:
+                data.update({'url': '|'.join([url[0], urlencode(headers)])})
+            else:
+                data.update({'url': url[0]})
 
             live_list.append(data)
 
@@ -210,6 +225,7 @@ class Indexer:
 
         if kodi.setting('live_tv_mode') == '0':
 
+            kodi.setsortmethod()
             kodi.setsortmethod('production_code')
             kodi.setsortmethod('title')
             kodi.setsortmethod('genre', mask='%C')

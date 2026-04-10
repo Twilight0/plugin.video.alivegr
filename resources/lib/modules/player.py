@@ -26,8 +26,8 @@ from ..indexers.vod import GM_MOVIES, GM_SHORTFILMS, GM_THEATER, GM_BASE
 from .source_makers import gm_source_maker
 from ..resolvers import youtube
 from .helpers import prevent_failure
-from .constants import YT_URL, HOSTS, SEPARATOR, PLUGINS_PATH, cache_function, cache_duration, PLAYBACK_HISTORY
-from .utils import m3u8_picker, add_to_file
+from .constants import YT_URL, SEPARATOR, PLUGINS_PATH, cache_function, cache_duration, PLAYBACK_HISTORY
+from .utils import add_to_file
 
 skip_directory = False
 
@@ -60,17 +60,6 @@ def conditionals(url):
         log('Resolving with youtube addon...')
 
         return yt(url)
-
-    elif HOSTS(url) and HostedMediaFile(url).valid_url():
-
-        try:
-            stream = resolve_url(url)
-            log('Resolving with Resolveurl...')
-            return stream
-        except HTTPError:
-            return url
-        except ResolverError:
-            return None
 
     elif HostedMediaFile(url).valid_url():
 
@@ -266,7 +255,7 @@ def dash_conditionals(stream):
 
         inputstream_adaptive = False
 
-    m3u8_dash = ('.hls' in stream or '.m3u8' in stream) and kodi.setting('m3u8_quality_picker') == '2' and not 'greektv.ca' in stream
+    m3u8_dash = ('.hls' in stream or '.m3u8' in stream) and kodi.setting('m3u8_quality_picker') == '1'
 
     dash = ('.mpd' in stream or 'dash' in stream or '.ism' in stream or m3u8_dash) and inputstream_adaptive
 
@@ -333,15 +322,15 @@ def player(url, params):
 
     dash, m3u8_dash, mimetype, manifest_type = dash_conditionals(stream)
 
-    if not m3u8_dash and kodi.setting('m3u8_quality_picker') == '1' and '.m3u8' in stream:
-
-        try:
-
-            stream = m3u8_picker(stream)
-
-        except TypeError:
-
-            pass
+    # if not m3u8_dash and kodi.setting('m3u8_quality_picker') == '1' and '.m3u8' in stream:
+    #
+    #     try:
+    #
+    #         stream = m3u8_picker(stream)
+    #
+    #     except TypeError:
+    #
+    #         pass
 
     if stream != url:
 
@@ -351,12 +340,21 @@ def player(url, params):
 
         log('Attempting direct playback: ' + stream)
 
+    drm = None
+    licence_type = None
+    licence_key = None
+
     # process headers if necessary:
     if '|' in stream:
 
         stream, sep, headers = stream.rpartition('|')
 
         headers = dict(parse_qsl(headers))
+
+        if 'DRM' in headers:
+            drm = headers.pop('DRM')
+            licence_type = drm[0]
+            licence_key = json.dumps(drm[1])
 
         log('Appending custom headers: ' + repr(headers))
 
@@ -380,7 +378,10 @@ def player(url, params):
 
     try:
 
-        directory.resolve(stream, meta=meta, icon=image, dash=dash, manifest_type=manifest_type, mimetype=mimetype)
+        directory.resolve(
+            stream, meta=meta, icon=image, dash=dash, manifest_type=manifest_type, mimetype=mimetype,
+            licence_type=licence_type, licence_key=licence_key
+        )
 
     except:
 

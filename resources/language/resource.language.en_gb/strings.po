@@ -731,7 +731,7 @@ msgid "Gemini"
 msgstr ""
 
 msgctxt "#30209"
-msgid ""
+msgid "InputStream Adaptive Settings"
 msgstr ""
 
 msgctxt "#30210"
@@ -1263,7 +1263,7 @@ msgid "[COLOR green]Run/install log uploader[/COLOR]"
 msgstr ""
 
 msgctxt "#30342"
-msgid ""
+msgid "This button will open Inputstream Adaptive options, where you can change its own settings"
 msgstr ""
 
 msgctxt "#30343"

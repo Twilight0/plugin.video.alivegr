@@ -8,8 +8,8 @@
 import os.path
 from os import rename
 import re
-import m3u8
 import pickled
+import sqlite3
 from itertags import iwrapper
 from tulip import kodi, directory, cleantitle
 from netclient import Net
@@ -41,58 +41,58 @@ def stream_picker(links):
         return popped
 
 
-def m3u8_picker(url):
-
-    try:
-
-        if '|' not in url:
-            raise TypeError
-
-        link, _, head = url.rpartition('|')
-
-        headers = dict(parse_qsl(head))
-        streams = m3u8.load(link, headers=headers).playlists
-
-    except TypeError:
-
-        streams = m3u8.load(url).playlists
-
-    if not streams:
-        return url
-
-    qualities = []
-    urls = []
-
-    for stream in streams:
-
-        quality = repr(stream.stream_info.resolution).strip('()').replace(', ', 'x')
-
-        if quality == 'None':
-            quality = 'Auto'
-
-        uri = stream.absolute_uri
-
-        qualities.append(quality)
-
-        try:
-
-            if '|' not in url:
-                raise TypeError
-
-            urls.append(uri + ''.join(url.rpartition('|')[1:]))
-
-        except TypeError:
-            urls.append(uri)
-
-    if len(qualities) == 1:
-
-        kodi.infoDialog(kodi.i18n(30220).format(qualities[0]))
-
-        return url
-
-    links = list(zip(qualities, urls))
-
-    return stream_picker(links)
+# def m3u8_picker(url):
+#
+#     try:
+#
+#         if '|' not in url:
+#             raise TypeError
+#
+#         link, _, head = url.rpartition('|')
+#
+#         headers = dict(parse_qsl(head))
+#         streams = m3u8.load(link, headers=headers).playlists
+#
+#     except TypeError:
+#
+#         streams = m3u8.load(url).playlists
+#
+#     if not streams:
+#         return url
+#
+#     qualities = []
+#     urls = []
+#
+#     for stream in streams:
+#
+#         quality = repr(stream.stream_info.resolution).strip('()').replace(', ', 'x')
+#
+#         if quality == 'None':
+#             quality = 'Auto'
+#
+#         uri = stream.absolute_uri
+#
+#         qualities.append(quality)
+#
+#         try:
+#
+#             if '|' not in url:
+#                 raise TypeError
+#
+#             urls.append(uri + ''.join(url.rpartition('|')[1:]))
+#
+#         except TypeError:
+#             urls.append(uri)
+#
+#     if len(qualities) == 1:
+#
+#         kodi.infoDialog(kodi.i18n(30220).format(qualities[0]))
+#
+#         return url
+#
+#     links = list(zip(qualities, urls))
+#
+#     return stream_picker(links)
 
 
 def i18n():
@@ -118,7 +118,8 @@ def other_addon_settings(query):
 
         else:
 
-            kodi.openSettings('{0}'.format(query))
+            kodi.openSettings(addon_id=query)
+
     except Exception:
 
         pass
@@ -862,6 +863,7 @@ def checkpoint():
 
         cache_clear(notify=False)
         reset_idx(notify=False)
+        clean_old_textures()
 
         if kodi.setting('debug') == 'true':
 
@@ -878,6 +880,39 @@ def checkpoint():
 
         prompt()
         kodi.setSetting('last_check', str(check))
+
+
+def clean_old_textures():
+
+    base_path = kodi.transPath('special://profile/')
+    textures_path = kodi.join(base_path, 'Thumbnails')
+    db_path = kodi.join(base_path, 'Database/Textures13.db')
+
+    try:
+
+        conn = sqlite3.connect(str(db_path))
+        cursor = conn.cursor()
+
+        # Find the cached filenames for your specific assets
+        query = "SELECT cachedurl FROM texture WHERE url LIKE ? OR url LIKE ?"
+        params = (f"%{kodi.addonInfo('id')}/icon.png", f"%{kodi.addonInfo('id')}/fanart.jpg")
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        for (cached_rel_path,) in rows:
+
+            full_file_path = kodi.join(textures_path, cached_rel_path)
+
+            if kodi.exists(full_file_path):
+                kodi.deleteFile(full_file_path)
+
+    except sqlite3.Error as e:
+        print(f"Error reading database: {e}")
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
 
 
 def dev():

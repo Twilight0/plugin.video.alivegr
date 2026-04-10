@@ -731,8 +731,8 @@ msgid "Gemini"
 msgstr "Gemini"
 
 msgctxt "#30209"
-msgid ""
-msgstr ""
+msgid "InputStream Adaptive Settings"
+msgstr "Ρυθμίσεις InputStream Adaptive"
 
 msgctxt "#30210"
 msgid "Web TV"
@@ -1263,8 +1263,8 @@ msgid "[COLOR green]Run/install log uploader[/COLOR]"
 msgstr "[COLOR green]Εκτέλεση/εγκατάσταση αποφορτωτή του αρχείου καταγραφής[/COLOR]"
 
 msgctxt "#30342"
-msgid ""
-msgstr ""
+msgid "This button will open Inputstream Adaptive options, where you can change its own settings"
+msgstr "Αυτή η επιλογή θα ανοίξει τις επιλογές του Inputstream Adaptive, όπου μπορείτε να αλλάξετε τις δικές του ρυθμίσεις"
 
 msgctxt "#30343"
 msgid "Random"

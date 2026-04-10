@@ -82,18 +82,6 @@ CACHE_DEBUG = setting('do_not_use_cache') == 'true' and setting('debug') == 'tru
 SEPARATOR = ' - ' if setting('wrap_labels') == '1' else '[CR]'
 
 
-def HOSTS(url):
-
-    _hosts = [
-        'dailymotion' in url, 'ant1.com.cy' in url, 'netwix.gr' in url, 'tvopen.gr' in url, 'megatv.com' in url,
-        'alphatv.gr' in url, 'alphacyprus.com.cy' in url, 'sigmatv.com' in url,
-        'antenna.gr' in url, 'star.gr/tv/' in url, 'cybc.com.cy' in url, 'omegatv.com.cy' in url,
-        'skaitv.gr' in url, 'webtv.ert.gr' in url, 'ertflix.gr' in url, 'dai.ly/' in url
-    ]
-
-    return any(_hosts)
-
-
 def cache_duration(duration):
     if CACHE_DEBUG:
         return 0

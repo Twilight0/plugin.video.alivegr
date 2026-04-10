@@ -284,8 +284,8 @@
 					<constraints>
 						<options>
 							<option label="30168">0</option>
-							<option label="30169">1</option>
-							<option label="30204">2</option>
+<!--							<option label="30169">1</option>-->
+							<option label="30204">1</option>
 						</options>
 					</constraints>
 					<control type="list" format="string">
@@ -301,6 +301,21 @@
 					<dependencies>
 						<dependency type="enable">
 							<condition on="property" name="InfoBool">System.HasAddon(script.module.resolveurl)</condition>
+						</dependency>
+					</dependencies>
+					<control type="button" format="action">
+						<close>true</close>
+					</control>
+				</setting>
+				<setting id="other_addon_settings_ia" type="action" label="30209" help="30342">
+					<level>3</level>
+					<data>RunPlugin(plugin://plugin.video.alivegr/?action=other_addon_settings&amp;query=inputstream.adaptive)</data>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="enable">
+							<condition on="property" name="InfoBool">System.HasAddon(inputstream.adaptive)</condition>
 						</dependency>
 					</dependencies>
 					<control type="button" format="action">
