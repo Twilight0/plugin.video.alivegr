@@ -292,21 +292,6 @@
 						<heading>30219</heading>
 					</control>
 				</setting>
-				<setting id="other_addon_settings_rurl" type="action" label="30025" help="30439">
-					<level>3</level>
-					<data>RunPlugin(plugin://plugin.video.alivegr/?action=other_addon_settings&amp;query=script.module.resolveurl)</data>
-					<constraints>
-						<allowempty>true</allowempty>
-					</constraints>
-					<dependencies>
-						<dependency type="enable">
-							<condition on="property" name="InfoBool">System.HasAddon(script.module.resolveurl)</condition>
-						</dependency>
-					</dependencies>
-					<control type="button" format="action">
-						<close>true</close>
-					</control>
-				</setting>
 				<setting id="other_addon_settings_ia" type="action" label="30209" help="30342">
 					<level>3</level>
 					<data>RunPlugin(plugin://plugin.video.alivegr/?action=other_addon_settings&amp;query=inputstream.adaptive)</data>
@@ -436,6 +421,21 @@
 					<level>3</level>
 					<default>false</default>
 					<control type="toggle"/>
+				</setting>
+				<setting id="other_addon_settings_rurl" type="action" label="30025" help="30439">
+					<level>3</level>
+					<data>RunPlugin(plugin://plugin.video.alivegr/?action=other_addon_settings&amp;query=script.module.resolveurl)</data>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="enable">
+							<condition on="property" name="InfoBool">System.HasAddon(script.module.resolveurl)</condition>
+						</dependency>
+					</dependencies>
+					<control type="button" format="action">
+						<close>true</close>
+					</control>
 				</setting>
 				<setting id="other_addon_settings_yt" type="action" label="30281" help="30451">
 					<level>1</level>

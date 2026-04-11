@@ -185,10 +185,14 @@ class Indexer:
 
             menu = [pin_cm]
 
+            group_changer = {'title': 30034, 'query': {'action': 'live_switcher'}}
             r_and_c_cm = {'title': 30082, 'query': {'action': 'refresh_and_clear'}}
 
             if kodi.setting('live_tv_mode') == '0':
                 menu.insert(1, r_and_c_cm)
+
+            if kodi.setting('show_live_switcher') == 'false':
+                menu.insert(1, group_changer)
 
             if item['website'] != 'None':
                 web_cm = {'title': 30316, 'query': {'action': 'open_link', 'url': item['website']}}

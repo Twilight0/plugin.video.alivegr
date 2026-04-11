@@ -150,7 +150,7 @@ def gm_source_maker(url):
         if 'text-align: justify' in html:
             plot = iwrapper(html, 'p', attrs={'style': 'text-align: justify'}).__next__().text
         elif 'text-justify' in html:
-            plot = iwrapper(html, 'p', attrs={'class': '(?:text-muted)? text-justify'}).__next__().text
+            plot = iwrapper(html, 'p', attrs={'style': 'font-size:12pt.+'}).__next__().text
         else:
             plot = kodi.i18n(30085)
 
@@ -166,3 +166,7 @@ def gm_source_maker(url):
             data.update({'code': code})
 
         return data
+
+def gf_source_maker():
+
+    pass

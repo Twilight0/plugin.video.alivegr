@@ -56,6 +56,12 @@ GM_EPISODE = urljoin(GM_BASE, 'ajax.php?type=episode&epid={0}&view={1}')
 
 ########################################################################################################################
 
+GF_BASE = 'https://greekfun.net'
+GF_SEARCH = urljoin(GF_BASE,'/?ajax=search&q={}')
+GF_EPISODES = urljoin(GF_BASE,'/?ajax=episodes&id=72')
+
+########################################################################################################################
+
 LIVE_GROUPS = OrderedDict(
     [
         ('Panhellenic', 30201), ('Pancypriot', 30202), ('International', 30203), ('Regional', 30207),
