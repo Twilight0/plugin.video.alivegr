@@ -48,7 +48,7 @@ class SettingsMonitor(xbmc.Monitor):
         self.live_tv_mode = self.addon.getSetting('live_tv_mode')
         self.show_live_switcher = self.addon.getSetting('show_live_switcher')
         self.show_vod_switcher = self.addon.getSetting('show_vod_switcher')
-        self.show_pic_switcher = self.addon.getSetting('show_pic_switcher')
+        # self.show_pic_switcher = self.addon.getSetting('show_pic_switcher')
 
         self.action()
 

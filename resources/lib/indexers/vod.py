@@ -99,6 +99,8 @@ class Indexer:
             'icon': iconname('switcher'), 'action': 'vod_switcher', 'isFolder': 'False', 'isPlayable': 'False'
         }
 
+        self.group_changer = {'action': 'vod_switcher'}
+
     def vod_switcher(self, url):
 
         _, self.data = gm_root(url)
@@ -111,7 +113,10 @@ class Indexer:
             kodi.setSetting('vod_group', self.data[choice])
             kodi.idle()
             kodi.sleep(100)  # ensure setting has been saved
-            kodi.refresh()
+            if str(self.data[choice]) != kodi.setting('vod_group'):
+                kodi.refresh()
+            else:
+                kodi.execute('Dialog.Close(all)')
         else:
             kodi.execute('Dialog.Close(all)')
 
@@ -125,13 +130,16 @@ class Indexer:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
 
-        # cm_menu = {'title': 30034, 'query': {'action': 'refresh'}}
-
         for item in self.list:
 
             item.update({'icon': iconname('movies'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+                self.group_changer.update({'url': GM_MOVIES})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
 
             self.switch.update({'url': GM_MOVIES})
 
@@ -152,7 +160,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('short'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+                self.group_changer.update({'url': GM_SHORTFILMS})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
 
             self.switch.update({'url': GM_SHORTFILMS})
             self.list.insert(0, self.switch)
@@ -172,7 +185,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('series'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+                self.group_changer.update({'url': GM_SERIES})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
             self.switch.update({'url': GM_SERIES})
 
             self.list.insert(0, self.switch)
@@ -192,7 +210,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('shows'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+                self.group_changer.update({'url': GM_SHOWS})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
             self.switch.update({'url': GM_SHOWS})
 
             self.list.insert(0, self.switch)
@@ -212,7 +235,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('cartoon_series'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+                self.group_changer.update({'url': GM_ANIMATION})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
             self.switch.update({'url': GM_ANIMATION})
 
             self.list.insert(0, self.switch)
@@ -230,9 +258,16 @@ class Indexer:
             self.list = self.data
 
         for item in self.list:
+
             item.update({'icon': iconname('theater'), 'action': 'listing', 'isFolder': 'True'})
 
-        if kodi.setting('show_vod_switcher'):
+            if kodi.setting('show_vod_switcher') == 'false':
+
+                self.group_changer.update({'url': GM_THEATER})
+
+                item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
+
+        if kodi.setting('show_vod_switcher') == 'true':
             self.switch.update({'url': GM_THEATER})
 
             self.list.insert(0, self.switch)

@@ -42,7 +42,10 @@ class Indexer:
 
         if choice != -1:
             seq(str(choice))
-            kodi.refresh()
+            if str(choice) != kodi.setting('live_group'):
+                kodi.refresh()
+            else:
+                kodi.execute('Dialog.Close(all)')
 
     @cache_method(cache_duration(480))
     def live(self):
