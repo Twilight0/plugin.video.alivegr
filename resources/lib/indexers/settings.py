@@ -6,6 +6,7 @@
 # See LICENSES/GPL-3.0-only for more information.
 
 import sys
+from xbmcaddon import Addon
 from ..modules.themes import iconname
 from ..modules.constants import ART_ID, PAYPAL, FORUM, TWITTER
 from ..modules.utils import changelog
@@ -155,7 +156,7 @@ class Indexer:
 
     def info(self):
 
-        separator = '[CR]' if kodi.setting('wrap_labels') == '0' else ' '
+        separator = '[CR]' if Addon().getSetting('wrap_labels') == '0' else ' '
 
         try:
             disclaimer = kodi.addonInfo('disclaimer').decode('utf-8')

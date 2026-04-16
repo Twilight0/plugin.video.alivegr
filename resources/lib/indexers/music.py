@@ -7,11 +7,10 @@
 
 import json, re
 from collections import deque
-
+from xbmcaddon import Addon
 from tulip import kodi, directory
 from itertags import iwrapper
 from netclient import Net
-from tulip.log import log
 from tulip.utils import iteritems
 from urllib.parse import urljoin
 from ..modules.themes import iconname
@@ -29,7 +28,7 @@ class Indexer:
         self.list = []; self.data = []
         self.mgreekz_id = 'https://www.youtube.com/channel/UClMj1LyMRBMu_TG1B1BirqQ/'
         self.mgreekz_id = self.mgreekz_id.replace('https://www.youtube.com/channel', '{0}/channel'.format(YT_ADDON))
-        if kodi.setting('audio_only') == 'true' and kodi.condVisibility('Window.IsVisible(music)'):
+        if Addon().getSetting('audio_only') == 'true' and kodi.condVisibility('Window.IsVisible(music)'):
             self.content = 'songs'
             self.infotype = 'music'
         else:
@@ -127,7 +126,7 @@ class Indexer:
         else:
             artist = None
 
-        if kodi.setting('audio_only') == 'true' and kodi.condVisibility('Window.IsVisible(music)') and artist is not None:
+        if Addon().getSetting('audio_only') == 'true' and kodi.condVisibility('Window.IsVisible(music)') and artist is not None:
             artist = ''.join(artist)
 
         if 'songlist' in html:

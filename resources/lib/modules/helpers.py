@@ -150,14 +150,3 @@ def force():
 
     kodi.execute('UpdateAddonRepos')
     kodi.infoDialog(kodi.i18n(30261))
-
-
-def prevent_failure():
-
-    for i in range(0, 500):
-
-        if kodi.condVisibility('Window.IsActive(busydialog)'):
-            kodi.sleep(100)
-        else:
-            kodi.execute('Dialog.Close(all,true)')
-            break

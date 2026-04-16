@@ -5,9 +5,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
+from xbmcaddon import Addon
 from collections import OrderedDict
 from urllib.parse import urljoin
-from tulip.kodi import dataPath, join, setting, cacheDirectory
+from tulip.kodi import dataPath, join, cacheDirectory
 from pickled import FunctionCache
 
 cache_function = FunctionCache(cacheDirectory).cache_function
@@ -22,6 +23,7 @@ PLUGINS_PATH = 'special://home/addons/{0}/resources/plugins/'.format(PLUGINS_ID)
 YT_ADDON_ID = 'plugin.video.youtube'
 YT_ADDON = 'plugin://{0}'.format(YT_ADDON_ID)
 YT_URL = 'https://www.youtube.com/watch?v='
+YT_API = 'https://www.youtube.com/youtubei/v1/browse?key={}'
 YT_PREFIX = YT_ADDON + '/play/?video_id='
 PLAY_ACTION = '?action=play&url='
 
@@ -84,8 +86,8 @@ PLAYBACK_HISTORY = join(dataPath, 'playback_history.list')
 
 ########################################################################################################################
 
-CACHE_DEBUG = setting('do_not_use_cache') == 'true' and setting('debug') == 'true'
-SEPARATOR = ' - ' if setting('wrap_labels') == '1' else '[CR]'
+CACHE_DEBUG = Addon().getSetting('do_not_use_cache') == 'true' and Addon().getSetting('debug') == 'true'
+SEPARATOR = ' - ' if Addon().getSetting('wrap_labels') == '1' else '[CR]'
 
 
 def cache_duration(duration):

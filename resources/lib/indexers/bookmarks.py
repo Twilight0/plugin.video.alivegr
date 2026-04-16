@@ -7,9 +7,9 @@
 
 import json
 
+from xbmcaddon import Addon
 from tulip.cleantitle import strip_accents
 from tulip.utils import iteritems
-from tulip.kodi import setting
 from tulip import bookmarks, directory
 from tulip.log import log
 from ..modules.themes import iconname
@@ -37,16 +37,25 @@ class Indexer:
 
                 item = dict((k, v) for k, v in iteritems(i) if not k == 'next')
                 item['delbookmark'] = i['url']
+
+                if i['action'] == 'play':
+                    if Addon().getSetting('action_type') == '0':
+                        i.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True'})
+                    elif Addon().getSetting('action_type') == '1':
+                        item.update({'action': 'play'})
+
                 i.update({'cm': [{'title': 30081, 'query': {'action': 'deleteBookmark', 'url': json.dumps(item)}}]})
 
             self.list = sorted(self.data, key=lambda k: strip_accents(k['title'].lower()))
 
-            if setting('show_clear_bookmarks') == 'true':
+            if Addon().getSetting('show_clear_bookmarks') == 'true':
 
                 clear_all = {
                     'title': 30274,
                     'action': 'clear_bookmarks',
-                    'icon': iconname('empty')
+                    'icon': iconname('empty'),
+                    'isFolder': 'False',
+                    'isPlayable': 'False'
                 }
 
                 self.list.insert(0, clear_all)

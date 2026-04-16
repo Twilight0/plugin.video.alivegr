@@ -7,11 +7,13 @@
 
 import json
 
+from xbmcaddon import Addon
 from collections import deque
 from random import shuffle, choice as random_choice
 from resolveurl import add_plugin_dirs, resolve as resolve_url
 from resolveurl.hmf import HostedMediaFile
 from resolveurl.resolver import ResolverError
+# noinspection PyUnresolvedReferences
 from youtube_plugin.youtube.youtube_exceptions import YouTubeException
 from tulip import directory, kodi
 from tulip.log import log
@@ -25,11 +27,8 @@ from itertags import iwrapper
 from ..indexers.vod import GM_MOVIES, GM_SHORTFILMS, GM_THEATER, GM_BASE
 from .source_makers import gm_source_maker
 from ..resolvers import youtube
-from .helpers import prevent_failure
 from .constants import YT_URL, SEPARATOR, PLUGINS_PATH, cache_function, cache_duration, PLAYBACK_HISTORY
 from .utils import add_to_file
-
-skip_directory = False
 
 
 def conditionals(url):
@@ -76,7 +75,7 @@ def conditionals(url):
     elif GM_BASE in url:
 
         sources = gm_source_maker(url)
-        stream = mini_picker(sources['links'])
+        stream = stream_picker(sources['links'])
 
         return conditionals(stream)
 
@@ -132,7 +131,7 @@ def check_stream(stream_list, shuffle_list=False, start_from=0, show_pd=False, c
                 continue
 
 
-def mini_picker(links):
+def stream_picker(links):
 
     if len(links) == 1:
 
@@ -140,10 +139,10 @@ def mini_picker(links):
 
         return stream
 
-    elif kodi.setting('action_type') == '2' or skip_directory:
+    elif Addon().getSetting('action_type') == '2':
 
         try:
-            if kodi.setting('check_streams') == 'false':
+            if Addon().getSetting('check_streams') == 'false':
                 stream = random_choice([link[1] for link in links])
             else:
                 stream = check_stream(links)
@@ -158,7 +157,7 @@ def mini_picker(links):
 
         if choice == -1:
             return
-        elif kodi.setting('check_streams') == 'false':
+        elif Addon().getSetting('check_streams') == 'false':
             return [link[1] for link in links][choice]
         else:
             return check_stream(links, False, start_from=choice, show_pd=True, cycle_list=False)
@@ -195,7 +194,17 @@ def gm_directory(url, params):
         image = iwrapper(html, 'img', attrs={'class': 'thumbnail img-responsive'}, ret='src').__next__()
         image = urljoin(GM_BASE, image)
         title = iwrapper(html, 'h3').__next__().text
-        year = [y.text[-4:] for y in iwrapper(html, 'h4') if str(y.text[-4:]).isdigit()][0]
+        try:
+            year = [y.text[-4:] for y in iwrapper(html, 'h4') if str(y.text[-4:]).isdigit()][0]
+        except IndexError:
+            year = [y.text[-2:] for y in iwrapper(html, 'h4') if str(y.text[-2:]).isdigit()][0]
+            numeric_year = int(year)
+            if numeric_year < 100:
+                if numeric_year >= 40:
+                    numeric_year += 1900
+                else:
+                    numeric_year += 2000
+            year = str(numeric_year)
         try:
             episode = stripTags(deque(iwrapper(html, 'h4'), maxlen=1).pop().text)
             if episode[-4:].isdigit():
@@ -215,7 +224,7 @@ def gm_directory(url, params):
             'year': int(year), 'genre': genre, 'name': title
         }
 
-        if kodi.setting('check_streams') == 'true':
+        if Addon().getSetting('check_streams') == 'true':
             data.update({'query': json.dumps(sources['links'])})
 
         items.append(data)
@@ -242,8 +251,6 @@ def directory_picker(url, argv):
         items, content='movies', argv=argv
     )
 
-    prevent_failure()
-
 
 def dash_conditionals(stream):
 
@@ -255,7 +262,7 @@ def dash_conditionals(stream):
 
         inputstream_adaptive = False
 
-    m3u8_dash = ('.hls' in stream or '.m3u8' in stream) and kodi.setting('m3u8_quality_picker') == '1'
+    m3u8_dash = ('.hls' in stream or '.m3u8' in stream) and Addon().getSetting('m3u8_quality_picker') == '1'
 
     dash = ('.mpd' in stream or 'dash' in stream or '.ism' in stream or m3u8_dash) and inputstream_adaptive
 
@@ -289,13 +296,13 @@ def player(url, params):
         'episode' in url and GM_BASE in url
     )
 
-    if directory_boolean and kodi.setting('action_type') == '1':
+    if directory_boolean and Addon().getSetting('action_type') == '1':
         directory.run_builtin(action='directory', url=url)
         return
 
     log('Attempting to play this url: ' + url)
 
-    if params.get('query') and kodi.setting('check_streams') == 'true':
+    if params.get('query') and Addon().getSetting('check_streams') == 'true':
         sl = json.loads(params.get('query'))
         index = int(kodi.infoLabel('Container.CurrentItem')) - 1
         stream = check_stream(sl, False, start_from=index, show_pd=True, cycle_list=False)
@@ -308,7 +315,7 @@ def player(url, params):
 
         return
 
-    elif kodi.setting('show_history') == 'true':
+    elif Addon().getSetting('show_history') == 'true':
         params.update({'isFolder': 'False'})
         add_to_file(PLAYBACK_HISTORY, json.dumps(params))
 
@@ -340,7 +347,6 @@ def player(url, params):
 
         log('Attempting direct playback: ' + stream)
 
-    drm = None
     licence_type = None
     licence_key = None
 

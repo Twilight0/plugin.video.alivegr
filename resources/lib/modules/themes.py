@@ -11,7 +11,8 @@ from .constants import ART_ID
 
 def theme():
 
-    icon_theme = kodi.setting('theme')
+    from xbmcaddon import Addon
+    icon_theme = Addon().getSetting('theme')
 
     if icon_theme == '0':
         return 'alivegr', '+alivegr.png'

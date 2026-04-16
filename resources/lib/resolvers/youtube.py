@@ -1,27 +1,50 @@
 # -*- coding: utf-8 -*-
-
+import json
 # AliveGR Addon
 # Author Twilight0
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
 import re
+from urllib.parse import urlparse
+# noinspection PyUnresolvedReferences
 import youtube_resolver
-from ..modules.constants import YT_URL, cache_function, cache_duration
+from ..modules.constants import YT_URL, YT_API, cache_function, cache_duration
 from tulip import kodi
 from netclient import Net
+from useragents import get_ua
 from ..modules.utils import stream_picker
 
 
 @cache_function(cache_duration(360))
 def generic(url, add_base=False):
 
-    html = Net().http_GET(url).content
+    html = Net().http_GET(
+        url, headers={'User-Agent': get_ua(), "Accept-Language": "en-US,en;q=0.9", "Cookie": "CONSENT=YES+"}
+    ).content
 
-    try:
-        video_id = re.search(r'videoId.+?([\w-]{11})', html).group(1)
-    except AttributeError:
-        return
+    # try:
+
+    api_key = re.search(r'innertubeApiKey": "(\w+?)"', html).group(1)
+    version = re.search(r'''innertubeContextClientVersion": "([\d.]+?)"''', html).group(1)
+
+    payload = {
+        "context": {
+            "client": {
+                "clientName": "WEB",
+                "clientVersion": version
+            }
+        },
+        "browseId": [p for p in urlparse(url).path.split('/') if p not in ['', 'live']][0]
+    }
+
+    res = Net().http_POST(YT_API.format(api_key), form_data=payload, headers={'User-Agent': get_ua()}).content
+    data = json.loads(res)
+
+    video_id = data.get('videoRenderer').get('videoId')
+
+    # except:
+    #     return
 
     if not add_base:
 

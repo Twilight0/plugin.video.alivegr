@@ -27,7 +27,7 @@ class Indexer:
         post = 'searchcategory={0}&searchtext={1}'.format(category, quote(str_input.encode('utf-8')))
 
         if category == 'person':
-            self.list = vod.Indexer().persons_index(SEARCH, post=post)
+            self.list = vod.Indexer().persons_index(GM_SEARCH, post=post)
         else:
             self.list = vod.Indexer().listing(GM_SEARCH, post=post, get_listing=True)
 
@@ -67,19 +67,19 @@ class Indexer:
 
             for i in search_history:
                 if i['query'].split(',')[0] == 'Live TV Channel':
-                    i.update({'image': iconname('monitor')})
+                    i.update({'image': iconname('monitor'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'TV Serie':
-                    i.update({'image': iconname('series')})
+                    i.update({'image': iconname('series'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'TV Show':
-                    i.update({'image': iconname('shows')})
+                    i.update({'image': iconname('shows'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'Movie':
-                    i.update({'image': iconname('movies')})
+                    i.update({'image': iconname('movies'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'Theater':
-                    i.update({'image': iconname('theater')})
+                    i.update({'image': iconname('theater'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'Cartoon':
-                    i.update({'image': iconname('kids')})
+                    i.update({'image': iconname('kids'), 'isFolder': 'True'})
                 elif i['query'].split(',')[0] == 'Person':
-                    i.update({'image': iconname('user')})
+                    i.update({'image': iconname('user'), 'isFolder': 'True'})
 
             self.list.extend(search_history)
 

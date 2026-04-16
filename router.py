@@ -167,9 +167,9 @@ def route():
         bookmarks.Indexer().bookmarks()
 
     elif action == 'clear_bookmarks':
-        bm.clear('bookmark')
-        kodi.sleep(200)
-        kodi.refresh()
+
+        # utils.clear_bookmarks()
+        utils.purge_bookmarks()
 
     elif action == 'playback_history':
 
@@ -214,7 +214,7 @@ def route():
 
     elif action == 'openSettings':
 
-        kodi.openSettings(query)
+        kodi.execute('Addon.OpenSettings({})'.format(kodi.addonInfo('id')))
 
     elif action == 'other_addon_settings':
 
@@ -276,10 +276,6 @@ def route():
 
         kodi.reload_skin()
 
-    elif action == 'skin_choice':
-
-        kodi.skin_choice()
-
     elif action == 'cache_clear':
 
         utils.cache_clear()
@@ -300,17 +296,9 @@ def route():
 
         utils.reset_idx(forceit=query == 'force')
 
-    elif action == 'yt_setup':
-
-        utils.yt_setup()
-
     elif action == 'isa_enable':
 
         helpers.isa_enable()
-
-    elif action == 'isa_setup':
-
-        utils.isa_setup()
 
     elif action == 'rtmp_enable':
 

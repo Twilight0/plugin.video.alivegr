@@ -255,7 +255,7 @@ msgid "English/Greek"
 msgstr ""
 
 msgctxt "#30061"
-msgid "Show group switcher"
+msgid ""
 msgstr ""
 
 msgctxt "#30062"
@@ -1067,7 +1067,7 @@ msgid "Developer's Techno Picks"
 msgstr ""
 
 msgctxt "#30293"
-msgid "Switch to zapping mode"
+msgid "This option changes how you can change the group of the live channels"
 msgstr ""
 
 msgctxt "#30294"
@@ -1411,7 +1411,7 @@ msgid "Select a page"
 msgstr ""
 
 msgctxt "#30417"
-msgid "Keys set #"
+msgid "Select your theme"
 msgstr ""
 
 msgctxt "#30418"
@@ -1531,7 +1531,7 @@ msgid "Will reverse episode order. Defaults to being enabled."
 msgstr ""
 
 msgctxt "#30447"
-msgid "Enables the button which allows you to switch between groups (by title, by year, by genre, etc)"
+msgid "Controls the behaviour which allows you to switch between groups (by title, by year, by genre, etc)"
 msgstr ""
 
 msgctxt "#30448"
@@ -1727,19 +1727,19 @@ msgid "Show alternative live stream list"
 msgstr ""
 
 msgctxt "#30496"
-msgid ""
+msgid "Via dedicated button"
 msgstr ""
 
 msgctxt "#30497"
-msgid ""
+msgid "Via context menu item"
 msgstr ""
 
 msgctxt "#30498"
-msgid ""
+msgid "Pagination enabler"
 msgstr ""
 
 msgctxt "#30499"
-msgid ""
+msgid "This option changes the way you select the page you are on"
 msgstr ""
 
 msgctxt "#30500"

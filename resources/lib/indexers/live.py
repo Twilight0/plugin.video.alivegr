@@ -7,9 +7,10 @@
 
 import re
 import json
+from xbmcaddon import Addon
 from urllib.parse import urlencode
 from datetime import datetime
-from tulip import kodi, directory
+from tulip import directory, kodi
 from netclient import Net
 from useragents import get_ua
 from tulip.utils import py3_dec
@@ -80,6 +81,8 @@ class Indexer:
         updated = channels['updated']
         live_list = []
 
+        year = datetime.now().year
+
         for channel in channels['channels']:
 
             title = channel['name']
@@ -91,7 +94,7 @@ class Indexer:
             info = channel['info']
             headers = channel.get('headers')
             if headers == 'random':
-                headers = {'User-Agent': get_ua(), 'Referer': 'https://www.greektv.live/'}
+                headers = {'User-Agent': get_ua(), 'Referer': channel.get('website', 'https://www.greektv.live/')}
             drm = channel.get('drm')
             if drm:
                 if not isinstance(headers, dict):
@@ -119,7 +122,7 @@ class Indexer:
             data = (
                 {
                     'title': title, 'image': image, 'group': str(group),
-                    'genre': kodi.i18n(group), 'plot': info, 'website': website
+                    'genre': kodi.i18n(group), 'plot': info, 'website': website, 'year': year
                 }
             )
 
@@ -136,46 +139,26 @@ class Indexer:
 
         live_data, updated = self.live()
 
-        if kodi.setting('live_tv_mode') == '1' and kodi.setting('live_group') not in ['0', '0']:
+        live_group = int(kodi.setting('live_group')) - 1
 
-            value = int(kodi.setting('live_group')) - 1
+        try:
+            group = str(list(LIVE_GROUPS.values())[live_group])
+        except IndexError:
+            group = None
 
-            group = str(list(LIVE_GROUPS.values())[value])
+        if kodi.setting('live_group') not in ('0', '10') and query is None:
 
             live_data = [item for item in live_data if item['group'] == group]
 
-        elif kodi.setting('show_live_switcher') == 'true':
-
-            if kodi.setting('live_group') not in ['0', '10'] and query is None:
-
-                value = int(kodi.setting('live_group')) - 1
-
-                group = str(list(LIVE_GROUPS.values())[value])
-
-                live_data = [item for item in live_data if item['group'] == group]
-
-        elif not kodi.setting('live_tv_mode') == '1':
-
-            if kodi.setting('live_group') not in ['0', '10'] and query is None:
-
-                value = int(kodi.setting('live_group')) - 1
-
-                group = str(list(LIVE_GROUPS.values())[value])
-
-                live_data = [item for item in live_data if item['group'] == group]
-
-        if kodi.setting('live_group') == '10' and query is None:
+        elif kodi.setting('live_group') == '10' and query is None:
 
             live_data = [item for item in live_data if item['title'] in pinned_from_file(PINNED)]
-
-        year = datetime.now().year
 
         for item in live_data:
 
             item.update(
                 {
-                    'action': 'play', 'isPlayable': 'True', 'year': year,
-                    'duration': None
+                    'action': 'play', 'isPlayable': 'True', 'duration': None
                 }
             )
 
@@ -189,12 +172,8 @@ class Indexer:
             menu = [pin_cm]
 
             group_changer = {'title': 30034, 'query': {'action': 'live_switcher'}}
-            r_and_c_cm = {'title': 30082, 'query': {'action': 'refresh_and_clear'}}
 
-            if kodi.setting('live_tv_mode') == '0':
-                menu.insert(1, r_and_c_cm)
-
-            if kodi.setting('show_live_switcher') == 'false':
+            if kodi.setting('live_switcher_mode') == '1':
                 menu.insert(1, group_changer)
 
             if item['website'] != 'None':
@@ -203,15 +182,14 @@ class Indexer:
 
             item.update({'cm': menu})
 
-        if kodi.setting('show_live_switcher') == 'true' and kodi.setting('live_tv_mode') == '0':
+        if kodi.setting('live_switcher_mode') == '0':
 
             if kodi.setting('live_group') == '0':
                 label = kodi.i18n(30048)
             elif kodi.setting('live_group') == '10':
                 label = kodi.i18n(30282)
             else:
-                value = int(kodi.setting('live_group')) - 1
-                group = int(list(LIVE_GROUPS.values())[value])
+                group = int(list(LIVE_GROUPS.values())[live_group])
                 label = kodi.i18n(group)
 
             switch = {
@@ -230,14 +208,12 @@ class Indexer:
 
             return queried_list
 
-        if kodi.setting('live_tv_mode') == '0':
+        kodi.setsortmethod()
+        kodi.setsortmethod('production_code')
+        kodi.setsortmethod('title')
+        kodi.setsortmethod('genre', mask='%C')
 
-            kodi.setsortmethod()
-            kodi.setsortmethod('production_code')
-            kodi.setsortmethod('title')
-            kodi.setsortmethod('genre', mask='%C')
-
-        directory.builder(live_data, content='videos', as_playlist=kodi.setting('live_tv_mode') == '1')
+        directory.builder(live_data, content='videos', add_all_at_once=True)
 
     @cache_method(cache_duration(480))
     def cached_live_m3u(self):
@@ -298,4 +274,4 @@ class Indexer:
 
         modular_list.sort(key=lambda k: k['title'].lower())
 
-        directory.builder(modular_list, content='videos', as_playlist=kodi.setting('live_tv_mode') == '1')
+        directory.builder(modular_list, content='videos')

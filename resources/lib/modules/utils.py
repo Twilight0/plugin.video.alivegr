@@ -7,11 +7,11 @@
 
 import os.path
 from os import rename
-import re
+from xbmcaddon import Addon
 import pickled
 import sqlite3
 from itertags import iwrapper
-from tulip import kodi, directory, cleantitle
+from tulip import kodi, directory, cleantitle, bookmarks
 from netclient import Net
 from urllib.parse import parse_qsl, urlparse
 from tulip.log import log
@@ -127,9 +127,9 @@ def other_addon_settings(query):
 
 def reset_idx(notify=True, forceit=False):
 
-    if kodi.setting('reset_idx') == 'true' or forceit:
+    if Addon().getSetting('reset_idx') == 'true' or forceit:
 
-        if kodi.setting('reset_live') == 'true' or forceit:
+        if Addon().getSetting('reset_live') == 'true' or forceit:
 
             kodi.setSetting('live_group', '0')
 
@@ -171,6 +171,7 @@ def purge_bookmarks():
         if kodi.yesnoDialog(line1=kodi.i18n(30214)):
             kodi.deleteFile(kodi.bookmarksFile)
             kodi.infoDialog(kodi.i18n(30402))
+            kodi.refresh()
         else:
             kodi.infoDialog(kodi.i18n(30403))
     else:
@@ -532,66 +533,6 @@ def setup_various_keymaps(keymap):
         kodi.infoDialog(kodi.i18n(30403))
 
 
-def isa_setup():
-
-    settings_file = '''<settings version="2">
-    <setting id="MINBANDWIDTH" default="true">0</setting>
-    <setting id="MAXBANDWIDTH" default="true">0</setting>
-    <setting id="MAXRESOLUTION" default="true">0</setting>
-    <setting id="MAXRESOLUTIONSECURE" default="true">0</setting>
-    <setting id="STREAMSELECTION">2</setting>
-    <setting id="MEDIATYPE" default="true">0</setting>
-    <setting id="HDCPOVERRIDE" default="true">false</setting>
-    <setting id="IGNOREDISPLAY" default="true">false</setting>
-    <setting id="DECRYPTERPATH" default="true">special://xbmcbinaddons</setting>
-    <setting id="WIDEVINE_API" default="true">10</setting>
-    <setting id="PRERELEASEFEATURES" default="true">false</setting>
-</settings>
-'''
-
-    def wizard():
-
-        lines = settings_file.splitlines()[1:-1]
-
-        for line in lines:
-
-            kodi.addon('inputstream.adaptive').setSetting(
-                re.search(r'id="(\w+)"', line).group(1), re.search(r'>([\w/:]+)<', line).group(1)
-            )
-
-    if kodi.yesnoDialog(line1=kodi.i18n(30022)):
-
-        wizard()
-        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
-
-
-def yt_setup():
-
-    def wizard():
-
-        kodi.addon('plugin.video.youtube').setSetting('kodion.setup_wizard', 'false')
-        kodi.addon('plugin.video.youtube').setSetting('youtube.language', 'el')
-        kodi.addon('plugin.video.youtube').setSetting('youtube.region', 'GR')
-        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
-
-    def yt_mpd():
-
-        kodi.addon('plugin.video.youtube').setSetting('kodion.video.quality.mpd', 'true')
-        kodi.addon('plugin.video.youtube').setSetting('kodion.mpd.videos', 'true')
-        kodi.addon('plugin.video.youtube').setSetting('kodion.mpd.live_streams', 'true')
-        kodi.infoDialog(message=kodi.i18n(30402), time=3000)
-
-########################################################################################################################
-
-    if kodi.yesnoDialog(line1=kodi.i18n(30132)):
-
-        wizard()
-
-    if kodi.condVisibility('System.HasAddon(inputstream.adaptive)') and kodi.yesnoDialog(line1=kodi.i18n(30287)):
-
-        yt_mpd()
-
-
 ########################################################################################################################
 
 
@@ -612,7 +553,7 @@ def file_to_text(file_):
 
 def trim_content(f):
 
-    history_size = int(kodi.setting('history_size'))
+    history_size = int(Addon().getSetting('history_size'))
 
     file_ = open(f, 'r', encoding='utf-8')
 
@@ -667,6 +608,8 @@ def process_file(f, text, mode='remove'):
             idx = lines.index(text + '\n')
             search_type, _, search_term = lines[idx].strip('\n').partition(',')
             str_input = kodi.inputDialog(heading=kodi.i18n(30445), default=search_term)
+            if not str_input:
+                return None
             str_input = cleantitle.strip_accents(str_input)
             lines[idx] = ','.join([search_type, str_input]) + '\n'
         else:
@@ -704,11 +647,11 @@ def read_from_file(f):
 
 def changelog(get_text=False):
 
-    if kodi.setting('changelog_lang') == '0' and 'Greek' in kodi.infoLabel('System.Language'):
+    if Addon().getSetting('changelog_lang') == '0' and 'Greek' in kodi.infoLabel('System.Language'):
         change_txt = 'changelog.el.txt'
     elif (
-            kodi.setting('changelog_lang') == '0' and 'Greek' not in kodi.infoLabel('System.Language')
-    ) or kodi.setting('changelog_lang') == '1':
+            Addon().getSetting('changelog_lang') == '0' and 'Greek' not in kodi.infoLabel('System.Language')
+    ) or Addon().getSetting('changelog_lang') == '1':
         change_txt = 'changelog.en.txt'
     else:
         change_txt = 'changelog.el.txt'
@@ -849,7 +792,7 @@ def checkpoint():
     check = time() + 10800
 
     try:
-        new_version_prompt = kodi.setting('new_version_prompt') == 'true' and remote_version() > int(kodi.version().replace('.', ''))
+        new_version_prompt = Addon().getSetting('new_version_prompt') == 'true' and remote_version() > int(kodi.version().replace('.', ''))
     except ValueError:  # will fail if version install is alpha or beta
         new_version_prompt = False
 
@@ -865,7 +808,7 @@ def checkpoint():
         reset_idx(notify=False)
         clean_old_textures()
 
-        if kodi.setting('debug') == 'true':
+        if Addon().getSetting('debug') == 'true':
 
             log(
                 'Debug settings have been reset, please do not touch these settings manually,'
@@ -876,7 +819,7 @@ def checkpoint():
 
         kodi.setSetting('last_check', str(check))
 
-    elif new_version_prompt and time() > float(kodi.setting('last_check')):
+    elif new_version_prompt and time() > float(Addon().getSetting('last_check')):
 
         prompt()
         kodi.setSetting('last_check', str(check))
@@ -917,7 +860,7 @@ def clean_old_textures():
 
 def dev():
 
-    if kodi.setting('debug') == 'false':
+    if Addon().getSetting('debug') == 'false':
 
         dwp = kodi.dialog.input(
             'I hope you know what you\'re doing!', type=kodi.password_input, option=kodi.verify
@@ -936,7 +879,7 @@ def dev():
             kodi.infoDialog('Without proper password, debug/developer mode won\'t work', time=4000)
             kodi.execute('ActivateWindow(home)')
 
-    elif kodi.setting('debug') == 'true':
+    elif Addon().getSetting('debug') == 'true':
 
         kodi.setSetting('debug', 'false')
 
@@ -953,7 +896,7 @@ def page_selector(query):
         kodi.sleep(200)
         kodi.refresh()
 
-        if kodi.setting('pagination_reset') == 'true':
+        if Addon().getSetting('pagination_reset') == 'true':
             # wait a second in order to ensure container is first loaded then reset the page
             kodi.sleep(1000)
             kodi.setSetting('page', '0')
@@ -962,14 +905,14 @@ def page_selector(query):
 def page_menu(pages, reset=False):
 
     if not reset:
-        index = str(int(kodi.setting('page')) + 1)
+        index = str(int(Addon().getSetting('page')) + 1)
     else:
         index = '1'
 
     menu = {
         'title': kodi.i18n(30414).format(index),
         'action': 'page_selector',
-        'query': str(pages),
+        'query': pages,
         'icon': iconname('switcher'),
         'isFolder': 'False',
         'isPlayable': 'False'

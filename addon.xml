@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~alpha5" provider-name="Twilight0">
+<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~alpha6" provider-name="Twilight0">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="resource.images.alivegr.artwork" version="3.0.6"/>
@@ -11,7 +11,7 @@
         <import addon="script.module.netclient" version="1.0.0"/>
         <import addon="script.module.unicache" version="1.0.0"/>
         <import addon="script.module.parsers" version="1.0.0"/>
-        <import addon="script.module.tulip" version="4.0.0~alpha1"/>
+        <import addon="script.module.tulip" version="4.0.0"/>
 <!--        <import addon="script.module.m3u8" version="6.0.0"/>-->
         <import addon="plugin.video.youtube" version="7.4.0"/>
     </requires>
@@ -21,7 +21,7 @@
     <extension point="xbmc.service" library="resources/lib/modules/service.py" start="login"/>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <reuselanguageinvoker>false</reuselanguageinvoker>
+        <reuselanguageinvoker>true</reuselanguageinvoker>
         <summary lang="en">AliveGR addon</summary>
         <description lang="en_GB">AliveGR is an addon allowing streaming content available mostly in Greek language.</description>
         <disclaimer lang="en_GB">AliveGR's author does not host, stream or distribute any of the content displayed inside this software and cannot be held responsible for the quality or availability of the listed streams.

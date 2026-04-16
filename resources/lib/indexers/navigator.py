@@ -6,13 +6,12 @@
 # See LICENSES/GPL-3.0-only for more information.
 
 import json
-
 from tulip import kodi, directory
 from tulip.utils import convert_to_bool
 from tulip.utils import iteritems
 from tulip.log import log
 from ..modules.themes import iconname
-from ..modules.utils import read_from_file, reset_idx as reset
+from ..modules.utils import read_from_file
 from ..modules.constants import PLAYBACK_HISTORY
 
 
@@ -23,6 +22,12 @@ class Indexer:
         self.list = []
         self.menu = []
 
+    def get_setting(self, setting):
+
+        from xbmcaddon import Addon
+
+        return Addon().getSetting(setting)
+
     def root(self):
 
         log("Opening up")
@@ -32,8 +37,8 @@ class Indexer:
                 'title': kodi.i18n(30001),
                 'action': 'live_tv',
                 'icon': iconname('monitor'),
-                'show_item': kodi.setting('show_live') == 'true',
-                'isFolder': 'False' if kodi.setting('live_tv_mode') == '1' else 'True', 'isPlayable': 'False'
+                'show_item': self.get_setting('show_live') == 'true',
+                'isFolder': 'True', 'isPlayable': 'False'
             }
             # ,
             # {
@@ -69,7 +74,7 @@ class Indexer:
                 'title': kodi.i18n(30031),
                 'action': 'movies',
                 'icon': iconname('movies'),
-                'show_item': kodi.setting('show_movies') == 'true',
+                'show_item': self.get_setting('show_movies') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -77,7 +82,7 @@ class Indexer:
                 'title': kodi.i18n(30083),
                 'action': 'short_films',
                 'icon': iconname('short'),
-                'show_item': kodi.setting('show_short_films') == 'true',
+                'show_item': self.get_setting('show_short_films') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -85,7 +90,7 @@ class Indexer:
                 'title': kodi.i18n(30030),
                 'action': 'series',
                 'icon': iconname('series'),
-                'show_item': kodi.setting('show_series') == 'true',
+                'show_item': self.get_setting('show_series') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -93,7 +98,7 @@ class Indexer:
                 'title': kodi.i18n(30063),
                 'action': 'shows',
                 'icon': iconname('shows'),
-                'show_item': kodi.setting('show_shows') == 'true',
+                'show_item': self.get_setting('show_shows') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -101,7 +106,7 @@ class Indexer:
                 'title': kodi.i18n(30068),
                 'action': 'theater',
                 'icon': iconname('theater'),
-                'show_item': kodi.setting('show_theater') == 'true',
+                'show_item': self.get_setting('show_theater') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -110,7 +115,7 @@ class Indexer:
                 'action': 'listing',
                 'url': 'https://greek-movies.com/movies.php?g=6&y=&l=&p=',
                 'icon': iconname('documentaries'),
-                'show_item': kodi.setting('show_docs') == 'true',
+                'show_item': self.get_setting('show_docs') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -126,7 +131,7 @@ class Indexer:
                 'title': kodi.i18n(30032),
                 'action': 'kids',
                 'icon': iconname('kids'),
-                'show_item': kodi.setting('show_kids') == 'true',
+                'show_item': self.get_setting('show_kids') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             # ,
@@ -141,7 +146,7 @@ class Indexer:
                 'title': kodi.i18n(30125),
                 'action': 'music',
                 'icon': iconname('music'),
-                'show_item': kodi.setting('show_music') == 'true',
+                'show_item': self.get_setting('show_music') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -149,7 +154,7 @@ class Indexer:
                 'title': kodi.i18n(30095).partition(' ')[0],
                 'action': 'search_index',
                 'icon': iconname('search'),
-                'show_item': kodi.setting('show_search') == 'true',
+                'show_item': self.get_setting('show_search') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -157,7 +162,7 @@ class Indexer:
                 'title': kodi.i18n(30012),
                 'action': 'playback_history',
                 'icon': iconname('history'),
-                'show_item': kodi.setting('show_history') == 'true',
+                'show_item': self.get_setting('show_history') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -165,7 +170,7 @@ class Indexer:
                 'title': kodi.i18n(30055),
                 'action': 'bookmarks',
                 'icon': iconname('bookmarks'),
-                'show_item': kodi.setting('show_bookmarks') == 'true',
+                'show_item': self.get_setting('show_bookmarks') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -173,7 +178,7 @@ class Indexer:
                 'title': kodi.i18n(30137),
                 'action': 'settings',
                 'icon': iconname('settings'),
-                'show_item': kodi.setting('show_settings') == 'true',
+                'show_item': self.get_setting('show_settings') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
             ,
@@ -181,7 +186,7 @@ class Indexer:
                 'title': kodi.i18n(30288),
                 'action': 'quit',
                 'icon': iconname('quit'),
-                'show_item': kodi.setting('show_quit') == 'true',
+                'show_item': self.get_setting('show_quit') == 'true',
                 'isFolder': 'False', 'isPlayable': 'False'
             }
         ]
@@ -221,7 +226,7 @@ class Indexer:
                 bookmark_cm = {'title': 30080, 'query': {'action': 'addBookmark', 'url': json.dumps(bookmark)}}
                 remove_from_history_cm = {'title': 30485, 'query': {'action': 'delete_from_history', 'query': json.dumps(i)}}
                 clear_history_cm = {'title': 30471, 'query': {'action': 'clear_playback_history'}}
-                i.update({'cm': [bookmark_cm, remove_from_history_cm, clear_history_cm]})
+                i.update({'isPlayable': 'true', 'cm': [bookmark_cm, remove_from_history_cm, clear_history_cm]})
 
             directory.builder(self.list)
 

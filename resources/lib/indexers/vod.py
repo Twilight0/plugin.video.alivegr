@@ -7,6 +7,7 @@
 
 import re
 import json
+from xbmcaddon import Addon
 from urllib.parse import urljoin, urlparse
 from tulip import directory, kodi, cleantitle
 from tulip.utils import list_divider, iteritems
@@ -95,7 +96,7 @@ class Indexer:
         self.years = []
 
         self.switch = {
-            'title': kodi.i18n(30045).format(kodi.i18n(int(kodi.setting('vod_group')))),
+            'title': kodi.i18n(30045).format(kodi.i18n(int(Addon().getSetting('vod_group')))),
             'icon': iconname('switcher'), 'action': 'vod_switcher', 'isFolder': 'False', 'isPlayable': 'False'
         }
 
@@ -110,13 +111,13 @@ class Indexer:
         choice = kodi.selectDialog(heading=kodi.i18n(30062), list=translated)
 
         if choice <= len(self.data) and not choice == -1:
-            kodi.setSetting('vod_group', self.data[choice])
+            Addon().setSetting('vod_group', self.data[choice])
             kodi.idle()
             kodi.sleep(100)  # ensure setting has been saved
-            if str(self.data[choice]) != kodi.setting('vod_group'):
-                kodi.refresh()
-            else:
-                kodi.execute('Dialog.Close(all)')
+            # if str(self.data[choice]) != Addon().getSetting('vod_group'):
+            #     kodi.refresh()
+            # else:
+            #     kodi.execute('Dialog.Close(all)')
         else:
             kodi.execute('Dialog.Close(all)')
 
@@ -125,7 +126,7 @@ class Indexer:
         self.data, _ = gm_root(GM_MOVIES)
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -134,12 +135,12 @@ class Indexer:
 
             item.update({'icon': iconname('movies'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
                 self.group_changer.update({'url': GM_MOVIES})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
+        if Addon().getSetting('vod_switcher_mode') == '0':
 
             self.switch.update({'url': GM_MOVIES})
 
@@ -152,7 +153,7 @@ class Indexer:
         self.data = gm_root(GM_SHORTFILMS)[0]
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -160,12 +161,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('short'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
                 self.group_changer.update({'url': GM_SHORTFILMS})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
+        if Addon().getSetting('vod_switcher_mode') == '0':
 
             self.switch.update({'url': GM_SHORTFILMS})
             self.list.insert(0, self.switch)
@@ -177,7 +178,7 @@ class Indexer:
         self.data = gm_root(GM_SERIES)[0]
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -185,12 +186,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('series'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
                 self.group_changer.update({'url': GM_SERIES})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
+        if Addon().getSetting('vod_switcher_mode') == '0':
             self.switch.update({'url': GM_SERIES})
 
             self.list.insert(0, self.switch)
@@ -202,7 +203,7 @@ class Indexer:
         self.data = gm_root(GM_SHOWS)[0]
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -210,14 +211,14 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('shows'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
                 self.group_changer.update({'url': GM_SHOWS})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
-            self.switch.update({'url': GM_SHOWS})
+        if Addon().getSetting('vod_switcher_mode') == '0':
 
+            self.switch.update({'url': GM_SHOWS})
             self.list.insert(0, self.switch)
 
         directory.builder(self.list)
@@ -227,7 +228,7 @@ class Indexer:
         self.data = gm_root(GM_ANIMATION)[0]
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -235,12 +236,12 @@ class Indexer:
         for item in self.list:
             item.update({'icon': iconname('cartoon_series'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
                 self.group_changer.update({'url': GM_ANIMATION})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
+        if Addon().getSetting('vod_switcher_mode') == '0':
             self.switch.update({'url': GM_ANIMATION})
 
             self.list.insert(0, self.switch)
@@ -252,7 +253,7 @@ class Indexer:
         self.data = gm_root(GM_THEATER)[0]
 
         try:
-            self.list = [item for item in self.data if item['group'] == kodi.setting('vod_group')]
+            self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
         except Exception:
             kodi.setSetting('vod_group', '30213')
             self.list = self.data
@@ -261,13 +262,13 @@ class Indexer:
 
             item.update({'icon': iconname('theater'), 'action': 'listing', 'isFolder': 'True'})
 
-            if kodi.setting('show_vod_switcher') == 'false':
+            if Addon().getSetting('vod_switcher_mode') == '1':
 
                 self.group_changer.update({'url': GM_THEATER})
 
                 item.update({'cm': [{'title': 30034, 'query': self.group_changer}]})
 
-        if kodi.setting('show_vod_switcher') == 'true':
+        if Addon().getSetting('vod_switcher_mode') == '0':
             self.switch.update({'url': GM_THEATER})
 
             self.list.insert(0, self.switch)
@@ -341,9 +342,15 @@ class Indexer:
             image = urljoin(GM_BASE, image)
             link = iwrapper(item, 'a', ret='href').__next__()
             link = urljoin(GM_BASE, link)
-            pattern = re.compile(r'(.*?) \((\d{4})')
-            label = pattern.search(title)
+            label = re.search(r'(.*?) \((\d{2,4})', title)
             year = int(label.group(2))
+
+            if year < 100:
+                if year >= 40:
+                    year += 1900
+                else:
+                    year += 2000
+
             name = label.group(1)
 
             self.list.append(
@@ -371,7 +378,10 @@ class Indexer:
                         GM_MOVIES, GM_THEATER, GM_SHORTFILMS, GM_PERSON
                 )
             ):
-                item.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True'})
+                if Addon().getSetting('action_type') == '0':
+                    item.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True'})
+                elif Addon().getSetting('action_type') == '1':
+                    item.update({'action': 'play'})
             elif url.startswith(GM_SPORTS):
                 item.update({'action': 'events', 'isFolder': 'True'})
             else:
@@ -389,43 +399,53 @@ class Indexer:
 
             return self.list
 
-        if len(self.list) > int(kodi.setting('pagination_integer')) and kodi.setting('paginate_items') == 'true':
+        if len(self.list) > int(Addon().getSetting('pagination_integer')) and Addon().getSetting('paginate_items') == 'true':
 
-            if kodi.setting('sort_method') == '0':
+            if Addon().getSetting('sort_method') == '0':
 
                 self.list.sort(
                     key=lambda k: cleantitle.strip_accents(k['title'].lower()),
-                    reverse=kodi.setting('reverse_order') == 'true'
+                    reverse=Addon().getSetting('reverse_order') == 'true'
                 )
 
-            elif kodi.setting('sort_method') == '1':
+            elif Addon().getSetting('sort_method') == '1':
 
-                self.list.sort(key=lambda k: k['year'], reverse=kodi.setting('reverse_order') == 'true')
+                self.list.sort(key=lambda k: k['year'], reverse=Addon().getSetting('reverse_order') == 'true')
 
             try:
 
-                pages = list_divider(self.list, int(kodi.setting('pagination_integer')))
-                self.list = pages[int(kodi.setting('page'))]
+                pages = list_divider(self.list, int(Addon().getSetting('pagination_integer')))
+                self.list = pages[int(Addon().getSetting('page'))]
                 reset = False
 
             except Exception:
 
-                pages = list_divider(self.list, int(kodi.setting('pagination_integer')))
+                pages = list_divider(self.list, int(Addon().getSetting('pagination_integer')))
                 self.list = pages[0]
                 reset = True
 
-            self.list.insert(0, page_menu(len(pages), reset=reset))
+            if Addon().getSetting('pagination_function') == '0':
+                self.list.insert(0, page_menu(str(len(pages)), reset=reset))
+            elif Addon().getSetting('pagination_function') == '1':
 
-        if kodi.setting('paginate_items') == 'false' or len(self.list) <= int(kodi.setting('pagination_integer')):
+                if not reset:
+                    index = str(int(Addon().getSetting('page')) + 1)
+                else:
+                    index = '1'
+
+                for i in self.list:
+                    i.update({'cm': [{'title': kodi.i18n(30414).format(index), 'query': {'action': 'page_selector', 'query': str(len(pages))}}]})
+
+        if Addon().getSetting('paginate_items') == 'false' or len(self.list) <= int(Addon().getSetting('pagination_integer')):
 
             kodi.setsortmethod(mask='%Y')
             kodi.setsortmethod('label', mask='%Y')
             kodi.setsortmethod('year')
 
         if url.startswith((GM_MOVIES, GM_THEATER, GM_SHORTFILMS)):
-            directory.builder(self.list, content='movies')
+            directory.builder(self.list, content='movies', add_all_at_once=True)
         else:
-            directory.builder(self.list, content='tvshows')
+            directory.builder(self.list, content='tvshows', add_all_at_once=True)
 
     @cache_method(cache_duration(720))
     def epeisodia(self, url):
@@ -436,7 +456,7 @@ class Indexer:
         try:
             year = iwrapper(html, 'h4', attrs={'style': 'text-indent:10px;'}).__next__().text
         except (IndexError, StopIteration):
-            year = iwrapper(html, 'h4', attrs={'style': 'padding-left:10px;'}).__next__().text
+            year = iwrapper(html, 'h4', attrs={'style': '^padding-left:10px;$'}).__next__().text
         year = int(re.search(r'(\d{4})', year).group(1))
         name = iwrapper(html, 'h2').__next__().text
 
@@ -504,12 +524,15 @@ class Indexer:
 
         self.list = self.epeisodia(url)
 
+        refresh_cm = {'title': 30054, 'query': {'action': 'refresh'}}
+
+        cm = [refresh_cm]
+
         for item in self.list:
 
-            refresh_cm = {'title': 30054, 'query': {'action': 'refresh'}}
-            item.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True', 'cm': [refresh_cm]})
+            item.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True', 'cm': cm})
 
-        if kodi.setting('episodes_reverse') == 'true':
+        if Addon().getSetting('episodes_reverse') == 'true':
 
             self.list = sorted(
                 self.list,
@@ -520,27 +543,38 @@ class Indexer:
 
             self.list = sorted(self.list, key=lambda k: k['group'])
 
-        if len(self.list) > int(kodi.setting('pagination_integer')) and kodi.setting('paginate_items') == 'true':
+        if len(self.list) > int(Addon().getSetting('pagination_integer')) and Addon().getSetting('paginate_items') == 'true':
 
             try:
 
-                pages = list_divider(self.list, int(kodi.setting('pagination_integer')))
-                self.list = pages[int(kodi.setting('page'))]
+                pages = list_divider(self.list, int(Addon().getSetting('pagination_integer')))
+                self.list = pages[int(Addon().getSetting('page'))]
                 reset = False
 
             except Exception:
 
-                pages = list_divider(self.list, int(kodi.setting('pagination_integer')))
+                pages = list_divider(self.list, int(Addon().getSetting('pagination_integer')))
                 self.list = pages[0]
                 reset = True
 
-            self.list.insert(0, page_menu(len(pages), reset=reset))
+            if Addon().getSetting('pagination_function') == '0':
+                self.list.insert(0, page_menu(str(len(pages)), reset=reset))
+            elif Addon().getSetting('pagination_function') == '1':
+
+                if not reset:
+                    index = str(int(Addon().getSetting('page')) + 1)
+                else:
+                    index = '1'
+
+                cm.append({'title': kodi.i18n(30414).format(index), 'query': {'action': 'page_selector', 'query': str(len(pages))}})
+                for i in self.list:
+                    i.update({'cm': cm})
 
         kodi.setsortmethod()
         # kodi.setsortmethod('title')
         # kodi.setsortmethod('year')
 
-        directory.builder(self.list, content='episodes')
+        directory.builder(self.list, content='episodes', add_all_at_once=True)
 
     def gm_sports(self):
 
