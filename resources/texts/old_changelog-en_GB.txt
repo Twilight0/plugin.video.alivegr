@@ -1,3 +1,84 @@
++ [COLOR red]2.11.X series[/COLOR] [I]11-09-2022 - 15-04-2023[/I]
+
+Additions:
+- Playback history
+- Add capability to rename/change search history items
+- Add capability of auto container refresh on certain settings change (ie icon theme)
+- IPTV Setup client setup reapplied and simplified
+
+Fixes:
+- The usual bug fixes here and there
+- Fixed gamato kids indexer
+- Fixed addon.xml validation
+- Fixed installation failure and Kodi crash on Android
+- Added exception for variable quality choice on Montreal Greek TV's stream
+
+Replacements/Substitutions:
+- Clean up and rearrangement to the tools section/menu/settings (and submenus)
+- Renamed history.csv to search_history.csv (to accommodate naming scheme for playback history)
+- Replace deprecated "client.request" function to net.HTTP_get
+- Get item title for pinning from a query than listitem (fixes behaviour when there are gui delays)
+- Rename "Toronto Channels" live group into "Editor's Choice"
+- Improved screenshots
+
+Removals:
+- Changelog in news section (addon.xml) will contain only the latest version, please refer to changelog.txt for more details about past versions
+- Miscellany section
+
++ [COLOR red]2.10.X series[/COLOR] [I]18-07-2022 - 11-09-2022[/I]
+
+Additions:
+- Playback history
+- Add capability to rename/change search history items
+- Re-addition of the capability to setup iptv simple client for IPTV with a choice of lists for live TV channels (Will enhance in a future version)
+- Add capability of auto container refresh on certain settings change (ie icon theme)
+
+Fixes:
+- The usual bug fixes here and there
+- Fixed addon.xml validation
+
+Replacements/Substitutions:
+- Clean up to the tools section/menu (and submenus)
+- Renamed history.csv to search_history.csv (to accommodate naming scheme for playback history)
+- Replace deprecated client.request function to net.HTTP_get
+- Get item title for pinning from a query than listitem (fixes behaviour when there are gui delays)
+- Improved screenshots
+
+Removals:
+- Changelog in news section (addon.xml) will contain only the latest version, please refer to changelog.txt for more details about past versions
+
++ [COLOR red]2.10.X series[/COLOR] [I]18-07-2022 - 24-07-2022[/I]
+
+Fixes:
+- GM music indexer playback
+- Stream choice across all combinations (dialog/catalog/random, either check stream or not)
+- A few other things here and there
+
+Replacements/Substitutions:
+- Youtube module from tulip with scrapetube (which does not require api keys)
+- Pyxbmct related functions and windows with traditional xbmcbui dialogs (lets keep it simple and uniform across skins)
+- Simplify youtube music techno choices indexer
+- Behaviour on how settings.xml is applied for compatibility
+
+Removals:
+- Youtube api related functions (and setup to user)
+- Social & donation links from welcome screen
+- Deprecated "common" resolvers
+
+Additions:
+- Add search index and history (You can add items, delete and purge entire history)
+- New keymap: On fullscreen video short return key press stops playback, long press behaves as the default keymap
+- New action: Setup inputstream adaptive with recommended settings
+- Add information when checking streams regarding the host
+
++ [COLOR red]2.9.X series[/COLOR] [I]27-04-2021 - 30-12-2021[/I]
+- Some bug and labeling fixes
+- Check streams when picking a stream sequentially (default being off)
+- Removed playlist mode from vod stream choices
+- Clean up on some indexers
+- Enhance activate other addon function
+- Bump dependencies
+
 + [COLOR red]2.8.X[/COLOR] [I]25-03-2021 - 20-04-2021[/I]
 - Change caching method
 - New settings.xml for Matrix+

@@ -1,2 +1,28 @@
-AliveGR's author and the software by this name do not collect any personal data or information of any kind, statistics or the way its being used.
-However, due to its nature acting as a search engine and being connected into various public domains, AliveGR's author cannot be held responsible for those domains' own terms of use and/or privacy policies.
+ALIVEGR PRIVACY POLICY
+
+Last Updated: April 2026
+
+DATA COLLECTION AND PROCESSING
+The author of AliveGR (the "Software") does not collect, store, or process any personal data, identifying information, or usage statistics of any kind.
+
+No Analytics: There are no embedded tracking scripts, telemetry, or diagnostic tools.
+
+No User Accounts: The software does not require registration or the submission of personal details.
+
+No Usage Logs: The author does not monitor how individuals use the software or the specific content accessed.
+
+THIRD-PARTY DOMAINS AND EXTERNAL LINKS
+AliveGR functions as a search engine and indexing tool that connects to various third-party public domains.
+
+External Policies: By using this software to access external content, you acknowledge that you are subject to the Terms of Use and Privacy Policies of those respective third-party domains.
+
+Responsibility: The author of AliveGR has no control over, and assumes no responsibility for, the content, privacy practices, or data collection methods of any third-party sites or services.
+
+Connection Headers: While the Software does not collect data, standard technical information (such as your IP address) is inherently visible to the third-party servers you connect to during a request.
+
+LOCAL STORAGE
+Any configuration settings or user preferences are stored locally on your own device. This data is not transmitted to the developer or any external server managed by the developer.
+
+CONTACT INFORMATION
+For any inquiries regarding this Privacy Policy, please contact the developer at:
+twilight0 {AT} vivaldi {DOT} net

@@ -1,12 +1,22 @@
-Additionally to disclaimer, the following words from the developer:
+Subject: Notice Regarding Intellectual Property and Content Indexing
 
-Dear copyright holders,
+To whom it may concern,
 
-If you feel your rights or your intellectual property is being violated by this software kindly note that I do not make any profit from the content displayed but rather for the indexing functions and it is just a hobby involving myself in my spare time.
-It is open source software and it does not come with any warranty whatsoever. What it does is find freely available sources in the vast world on the internet and deliver them as non-downloadable samples to end users.
+This software is an open-source project developed for educational and personal purposes. As the developer, I do not derive financial gain or profit from the content indexed or displayed via this application. The primary function of this software is to provide an indexing interface for publicly available web resources; it does not host, store, or distribute proprietary media.
 
-If you still want to report particular items inside respective sections, feel free to send an email to this e-mail address: twilight0 {AT} vivaldi {DOT} net
-Please state briefly your position and items that potentially infringe your rights.
+Please note that this software is provided "as is," without warranty of any kind, express or implied. All content is delivered as non-downloadable transient data sourced from the public domain or third-party providers.
 
-The developer
-~Twilight0
+I respect the intellectual property rights of others. If you are a copyright holder and believe that specific indexed links infringe upon your rights, please contact me directly at: twilight0 {AT} vivaldi {DOT} net.
+
+When submitting a request, please include:
+
+Identification of the copyrighted work claimed to have been infringed.
+
+The specific items or links within the software that are the subject of the infringement claim.
+
+Your contact information and professional standing regarding the intellectual property.
+
+Sincerely,
+
+Twilight0
+Lead Developer
