@@ -45,7 +45,7 @@ def gm_source_maker(url):
 
             if '<p style="margin-top:0px; margin-bottom:4px;">' in episode:
 
-                host = iwrapper(episode, 'p').__next__().text.split('<')
+                host = iwrapper(episode, 'p').__next__().text.split('<')[0]
 
                 for p in pts:
                     hl.append(''.join([host, kodi.i18n(30225), p.text]))
