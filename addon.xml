@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~alpha10" provider-name="Twilight0">
+<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~beta1" provider-name="Twilight0">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="resource.images.alivegr.artwork" version="3.0.6"/>
 <!--        <import addon="resource.images.alivegr.logos" version="1.0.2"/>-->
-        <import addon="script.module.resolveurl" version="5.1.199"/>
-        <import addon="script.module.resolveurl.pluginsgr" version="0.1.16"/>
-<!--        <import addon="script.module.urldispatcher" version="1.0.0"/>-->
-        <import addon="script.module.scrapetube" version="2.6.1"/>
+        <import addon="script.module.resolveurl" version="5.1.210"/>
+        <import addon="script.module.resolveurl.pluginsgr" version="0.2.5"/>
+        <import addon="script.module.urldispatcher" version="1.1.0"/>
+        <import addon="script.module.scrapetube" version="2.8.0"/>
         <import addon="script.module.netclient" version="1.1.2"/>
         <import addon="script.module.unicache" version="1.0.0"/>
         <import addon="script.module.parsers" version="1.0.0"/>
-        <import addon="script.module.tulip" version="4.0.3"/>
+        <import addon="script.module.tulip" version="4.1.2"/>
         <import addon="script.module.fuzzywuzzy" version="0.17.0"/>
         <import addon="script.module.websocket" version="1.6.4"/>
 <!--        <import addon="script.module.json_repair" version="0.52.5"/>-->
 <!--        <import addon="script.module.m3u8" version="6.0.0"/>-->
-        <import addon="plugin.video.youtube" version="7.4.3"/>
+<!--        <import addon="plugin.video.youtube" version="7.4.3"/>-->
     </requires>
     <extension point="xbmc.python.pluginsource" library="router.py">
         <provides>video audio executable</provides>
@@ -40,20 +40,23 @@ Kindly note that AliveGR is not an official part of the media player you are run
         <forum>https://github.com/Twilight0/plugin.video.alivegr/discussions</forum>
         <source>https://github.com/Twilight0/plugin.video.alivegr</source>
         <website>https://alivegr.net/</website>
-        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 26-05-2026[/I]
+        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 04-10-2026[/I]
 - Update live TV section with new channels, fewer groups, and new remote source
+- Support per-stream schema for live TV with individual DRM key and HTTP header pairs
+- Add "Choose Stream" context menu with persistent stream preference saving and silent fallback
+- Fix inputstream.adaptive DRM decryption license unpacking
+- Fix Greek-Movies host parsing TypeError on grouped episode links
 - Removed dependency for logos resource addon, logos are now pulled from a network source and cached locally
 - Major refactoring, removed legacy and compatibility code
-- Removed a lot of old and unused code and features, and simplified the overall structure of the addon
+- Prune obsolete dead code and legacy Python 2 decoding workarounds
 - New artwork and icon theme (gemini)
 - M3U8 module dependency removed and stream choice is now either adaptive or best
-- Groups and indexing methods can now be changes from either a context menu or from a dedicated button on top
+- Groups and indexing methods can now be changed from either a context menu or from a dedicated button on top
 - Added the option to autostart the addon on Kodi launch (defaults to off)
-- Added additional source for movies (greekfun)
-- Updated Privacy Policy, DMCA texts
+- Updated Privacy Policy and DMCA texts
 - Genres are now translated
-- Add localhost proxy for tricky url requests and resolving of streams (initially designed to handle websocket streams)
-- Add more stream sources and refactor indexers to mix lists</news>
+- Removed localhost HTTP proxy functionality and moved it to PluginsGR
+- Add more stream sources and refactor indexers to mix lists (temporarily removed, will add again with newer framework)</news>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>

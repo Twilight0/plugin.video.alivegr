@@ -35,8 +35,8 @@ def route():
 
     elif content == 'audio':
 
-        # music.Indexer().menu()
-        music.Indexer().gm_music()
+        music.Indexer().menu()
+        # music.Indexer().gm_music()
 
     elif content == 'executable':
 
@@ -55,6 +55,10 @@ def route():
         navigator.Indexer().generic(query)
 
     elif action == 'live_tv':
+
+        if kodi.setting('debug') == 'true':
+            import importlib
+            importlib.reload(live)
 
         live.Indexer().live_tv()
 
@@ -222,6 +226,10 @@ def route():
 
     elif action == 'play':
 
+        if kodi.setting('debug') == 'true':
+            import importlib
+            importlib.reload(player)
+
         player.player(url, params)
 
     elif action == 'directory':
@@ -231,6 +239,10 @@ def route():
     elif action == 'live_switcher':
 
         live.Indexer().switcher()
+
+    elif action == 'live_stream_picker':
+
+        live.Indexer.live_stream_picker(params)
 
     elif action == 'vod_switcher':
 

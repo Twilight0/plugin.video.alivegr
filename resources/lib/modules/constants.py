@@ -21,11 +21,7 @@ ART_ID = 'resource.images.alivegr.artwork'
 LOGOS_ID = 'resource.images.alivegr.logos'
 PLUGINS_ID = 'script.module.resolveurl.pluginsgr'
 PLUGINS_PATH = 'special://home/addons/{0}/resources/plugins/'.format(PLUGINS_ID)
-YT_ADDON_ID = 'plugin.video.youtube'
-YT_ADDON = 'plugin://{0}'.format(YT_ADDON_ID)
 YT_URL = 'https://www.youtube.com/watch?v='
-YT_API = 'https://www.youtube.com/youtubei/v1/browse?key={}'
-YT_PREFIX = YT_ADDON + '/play/?video_id='
 PLAY_ACTION = '?action=play&url='
 ALIVEGR = (
     '42bzpmLoN2Xyd2L3FmcvYmY0IGN3YmZ2QDZ0EGN4EWMwQGOzcDZxYGZ1EjYyUzYvADdodWasl2dU9SbvNmL05WZ052bj'
@@ -61,23 +57,11 @@ GM_SEARCH = urljoin(GM_BASE, 'search.php')
 GM_PERSON = urljoin(GM_BASE, 'person.php')
 GM_EPISODE = urljoin(GM_BASE, 'ajax.php?type=episode&epid={0}&view={1}')
 
+PLAYLIST_BASE = 'https://playlist.gr/'
+PLAYLIST_AJAX = urljoin(PLAYLIST_BASE, 'ajax.php')
+PLAYLIST_SEARCH = urljoin(PLAYLIST_BASE, 'search.php')
+
 ########################################################################################################################
-
-GF_BASE = 'https://greekfun.net'
-GFM_GETTER = (
-        'u92cq5ycllmdv12Xmd2L3FmcvMjZhZTOhZmMiZDZkhzNzIzNhJTYiJWYxQTM2QTYxgjZvADdodWas'
-        'l2dU9SbvNmL05WZ052bjJXZzVnY1hGdpdmL0NXan9yL6MHc0RHa'
-    )
-
-GFS_GETTER = (
-        'u92cq5ycllmclN3Xmd2L3FmcvcjYwMDZxgTO3MWYilTNxETZ0UzY1ITZ4EWO1EWN0cDNvADdodWasl2d'
-        'U9SbvNmL05WZ052bjJXZzVnY1hGdpdmL0NXan9yL6MHc0RHa'
-    )
-
-GFK_GETTER = (
-    '==gbvNnauMHZpt2Xmd2L3FmcvAzYhlDM3EGOhVmZ3IjNkV2Y3MGZhZTMmhjZkJ2NmJjMvADdodWasl2dU9S'
-    'bvNmL05WZ052bjJXZzVnY1hGdpdmL0NXan9yL6MHc0RHa'
-)
 
 ########################################################################################################################
 
@@ -127,80 +111,16 @@ GENRES = {
 
 ########################################################################################################################
 
-VOD_FILTER_MAP = {
-    '1': ('A', 'Α'),
-    '2': ('B', 'V', 'Β'),
-    '3': ('G', 'Γ'),
-    '4': ('D', 'Δ'),
-    '5': ('E', 'Ε'),
-    '6': ('Z', 'Ζ'),
-    '7': ('H', 'Η'),
-    '8': 'Θ',
-    '9': ('I', 'Ι'),
-    '10': ('K', 'Q', 'Κ'),
-    '11': ('L', 'Λ'),
-    '12': ('M', 'Μ'),
-    '13': ('N', 'Ν'),
-    '14': ('J', 'Ξ'),
-    '15': ('O', 'Ο'),
-    '16': ('P', 'Π'),
-    '17': ('R', 'Ρ'),
-    '18': ('S', 'Σ'),
-    '19': ('T', 'Τ'),
-    '20': ('U', 'Y', 'Υ'),
-    '21': ('F', 'Φ'),
-    '22': ('X', 'Χ'),
-    '23': ('C', 'Ψ'),
-    '24': ('W', 'Ω'),
-    '25': tuple('0123456789.')
-}
-
-VOD_YEAR_FILTER_MAP = {
-    '1': range(0, 1950),
-    '2': range(1950, 1960),
-    '3': range(1960, 1970),
-    '4': range(1970, 1980),
-    '5': range(1980, 1990),
-    '6': range(1990, 2000),
-    '7': range(2000, 2010),
-    '8': range(2010, 2020),
-    '9': range(2020, datetime.now().year + 1)
-}
-
-VOD_GENRE_FILTER_MAP = {
-    '1': ('κωμωδία',),
-    '2': ('δράμα',),
-    '3': ('δράση',),
-    '4': ('κοινωνική',),
-    '5': ('έγκλημα',),
-    '6': ('ντοκυμαντέρ',),
-    '7': ('ρομαντική',),
-    '8': ('κινουμένων σχεδίων',),
-    '9': ('μιούσικαλ',),
-    '10': ('ιστορική',),
-    '11': ('θρίλλερ',),
-    '12': ('μυστηρίου',),
-    '13': ('περιπέτεια',),
-    '14': ('επιστημονικής φαντασίας',),
-    '15': ('πολιτική',),
-    '16': ('πολεμική',),
-    '17': ('μυθοπλασία',),
-    '18': ('ερωτική',),
-    '19': ('βιογραφία',),
-    '20': ('παιδικό',)
-}
-
-ALL_VOD_CHARS = {char for chars in VOD_FILTER_MAP.values() for char in chars}
-
 ########################################################################################################################
 
 PINNED = join(dataPath, 'pinned.txt')
 SEARCH_HISTORY = join(dataPath, 'search_history.csv')
 PLAYBACK_HISTORY = join(dataPath, 'playback_history.list')
+STREAM_PREFS = join(dataPath, 'stream_preferences.json')
 
 ########################################################################################################################
 
-CACHE_DEBUG = Addon().getSetting('do_not_use_cache') == 'true' and Addon().getSetting('debug') == 'true'
+CACHE_DEBUG = (Addon().getSetting('do_not_use_cache') == 'true' and Addon().getSetting('debug') == 'true') or (Addon().getSetting('debug') == 'true' and Addon().getSetting('local_remote') == '0')
 SEPARATOR = ' - ' if Addon().getSetting('wrap_labels') == '1' else '[CR]'
 
 

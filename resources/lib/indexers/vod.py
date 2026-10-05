@@ -11,7 +11,7 @@ from xbmcaddon import Addon
 from urllib.parse import urljoin, urlparse, parse_qsl
 
 from tulip import directory, kodi, cleantitle
-from tulip.log import log
+# from tulip.log import log
 from tulip.utils import list_divider, iteritems
 from netclient import Net
 from useragents import spoofer
@@ -19,61 +19,15 @@ from itertags import iwrapper
 from ..modules.themes import iconname
 from ..modules.constants import (
     cache_function, cache_method, cache_duration, SEPARATOR, GM_BASE, GM_MOVIES, GM_SHOWS, GM_SERIES, GM_ANIMATION,
-    GM_THEATER, GM_SPORTS, GM_SHORTFILMS, GM_MUSIC, GM_SEARCH, GM_PERSON, GM_EPISODE, VOD_FILTER_MAP,
-    VOD_YEAR_FILTER_MAP, VOD_GENRE_FILTER_MAP, GENRES, GF_BASE, GFK_GETTER, GFM_GETTER
+    GM_THEATER, GM_SPORTS, GM_SHORTFILMS, GM_MUSIC, GM_SEARCH, GM_PERSON, GM_EPISODE, GENRES
 )
-from ..modules.utils import page_menu, lists_merger
-from ..modules.source_makers import gist_getter
+from ..modules.utils import page_menu
 
 
 @cache_function(cache_duration(720))
 def get_genres(item):
     genres = item.get('genre') or 'άλλο'
     return genres if isinstance(genres, list) else [genres]
-
-@cache_function(cache_duration(720))
-def filtration(url):
-
-    indexer = dict(parse_qsl(urlparse(url).query))
-
-    l_index = indexer.get('l')
-    y_index = indexer.get('y')
-    g_index = indexer.get('g')
-    gf_movies_list = gist_getter(GFM_GETTER)
-
-    if l_index in VOD_FILTER_MAP:
-
-        allowed_starts = VOD_FILTER_MAP[l_index]
-        return [
-            dict(item, image=spoofer(item.get('image') or 'https://openclipart.org/image/800px/144715')) for item in gf_movies_list
-            if item['label'].upper()[0] in allowed_starts
-        ]
-
-    elif y_index in VOD_YEAR_FILTER_MAP:
-
-        allowed_years = VOD_YEAR_FILTER_MAP[y_index]
-        return [
-            dict(item, image=spoofer(item.get('image') or 'https://openclipart.org/image/800px/144715')) for item in gf_movies_list
-            if item.get('year') in allowed_years
-        ]
-
-    elif g_index in VOD_GENRE_FILTER_MAP:
-
-        allowed_genres = [genre.lower() for genre in VOD_GENRE_FILTER_MAP[g_index]]
-        genres_lower = {k.lower(): v for k, v in GENRES.items()}
-
-        gf_movies_list = [
-            dict(item, image=spoofer(item.get('image') or 'https://openclipart.org/image/800px/144715')) for item in gf_movies_list
-            if any(g.lower() in allowed_genres for g in get_genres(item))
-        ]
-
-        for item in gf_movies_list:
-            item['genre'] = [genres_lower.get(g.lower(), g) for g in get_genres(item)] if 'genre' in item else [kodi.i18n(30089)]
-
-        return gf_movies_list
-
-    return []
-
 
 @cache_function(cache_duration(720))
 def gm_root(url):
@@ -147,6 +101,11 @@ def gm_root(url):
 
             root_list.append({'title': title, 'group': group, 'url': index})
 
+        # Add custom "άλλο" genre item (group '30200' is Genre/ΕΙΔΟΣ)
+        other_title = kodi.i18n(30089).capitalize()
+        other_url = url + '?g=21'
+        root_list.append({'title': other_title, 'group': '30200', 'url': other_url})
+
         return root_list, groups_list
 
 
@@ -213,7 +172,7 @@ class Indexer:
 
     def short_films(self):
 
-        self.data = gm_root(GM_SHORTFILMS)[0]
+        self.data, _ = gm_root(GM_SHORTFILMS)
 
         try:
             self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
@@ -238,7 +197,7 @@ class Indexer:
 
     def series(self):
 
-        self.data = gm_root(GM_SERIES)[0]
+        self.data, _ = gm_root(GM_SERIES)
 
         try:
             self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
@@ -263,7 +222,7 @@ class Indexer:
 
     def shows(self):
 
-        self.data = gm_root(GM_SHOWS)[0]
+        self.data, _ = gm_root(GM_SHOWS)
 
         try:
             self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
@@ -288,7 +247,7 @@ class Indexer:
 
     def cartoons_series(self):
 
-        self.data = gm_root(GM_ANIMATION)[0]
+        self.data, _ = gm_root(GM_ANIMATION)
 
         try:
             self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
@@ -313,7 +272,7 @@ class Indexer:
 
     def theater(self):
 
-        self.data = gm_root(GM_THEATER)[0]
+        self.data, _ = gm_root(GM_THEATER)
 
         try:
             self.list = [item for item in self.data if item['group'] == Addon().getSetting('vod_group')]
@@ -426,21 +385,7 @@ class Indexer:
 
     def listing(self, url, post=None, get_listing=False):
 
-        if 'gist.githubusercontent.com' in url:
-
-            self.list = gist_getter(url)
-
-        else:
-
-            self.list = self.gm_items_list(url, post)
-
-        if url.startswith(GM_MOVIES):
-
-            gf_movies_list = filtration(url)
-
-            if gf_movies_list:
-
-                self.list = lists_merger(self.list, gf_movies_list, 'title')
+        self.list = self.gm_items_list(url, post)
 
         for item in self.list:
 
@@ -453,11 +398,11 @@ class Indexer:
 
             if url.startswith(
                     (
-                            GM_MOVIES, GM_THEATER, GM_SHORTFILMS, GM_PERSON, GM_SEARCH, GFK_GETTER
+                            GM_MOVIES, GM_THEATER, GM_SHORTFILMS, GM_PERSON, GM_SEARCH
                     )
             ) and item['url'].startswith(
                 (
-                        GM_MOVIES, GM_THEATER, GM_SHORTFILMS, GM_PERSON, GF_BASE, GFK_GETTER
+                        GM_MOVIES, GM_THEATER, GM_SHORTFILMS, GM_PERSON
                 )
             ) or isinstance(item.get('urls'), list):
                 if Addon().getSetting('action_type') == '0':

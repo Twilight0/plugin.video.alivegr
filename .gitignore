@@ -5,3 +5,7 @@ Alivegr.code-workspace
 \.pylintrc
 .env
 __pycache__/
+# Standalone engine settings written at runtime by tests/resolves
+config.json
+# Local-only reference archive of removed sources
+docs/archive/

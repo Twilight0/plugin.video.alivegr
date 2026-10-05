@@ -257,8 +257,8 @@ class Indexer:
 
                 'title': kodi.i18n(30500).format(separator, kodi.addon('script.module.resolveurl.pluginsgr').getAddonInfo('version')),
                 'action': 'other_addon_settings',
-                'query': 'script.module.resolveurl',
-                'plot': kodi.i18n(30265),
+                'query': 'script.module.resolveurl.pluginsgr',
+                'plot': kodi.i18n(30504),
                 'icon': kodi.addon('script.module.resolveurl.pluginsgr').getAddonInfo('icon'),
                 'isFolder': 'False',
                 'isPlayable': 'False'

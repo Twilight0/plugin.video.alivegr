@@ -14,12 +14,12 @@ def theme():
     from xbmcaddon import Addon
     icon_theme = Addon().getSetting('theme')
 
-    if icon_theme == '0':
-        return 'alivegr', '+alivegr.png'
-    elif icon_theme == '1':
+    if icon_theme == '1':
         return 'twilight', '+twilight.png'
     elif icon_theme == '2':
         return 'gemini', '+gemini.png'
+    else:
+        return 'alivegr', '+alivegr.png'
 
 
 def iconname(name):

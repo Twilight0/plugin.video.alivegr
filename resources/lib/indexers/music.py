@@ -8,16 +8,23 @@
 import json, re
 from collections import deque
 from xbmcaddon import Addon
-from tulip import kodi, directory
+from tulip import kodi, directory, cleantitle
 from itertags import iwrapper
 from netclient import Net
 from tulip.utils import iteritems
 from urllib.parse import urljoin
 from ..modules.themes import iconname
-from ..modules.source_makers import gm_source_maker
-from ..modules.constants import cache_method, cache_duration, YT_ADDON, GM_MUSIC
+from ..modules.constants import cache_method, cache_duration, PLAYLIST_BASE, PLAYLIST_AJAX
 from ..modules.utils import yt_playlist
-from . import vod
+
+
+def _clean(txt):
+    if not txt:
+        return ''
+    txt = cleantitle.replaceHTMLCodes(txt)
+    if '&' in txt:
+        txt = cleantitle.replaceHTMLCodes(txt)
+    return txt.strip()
 
 
 # noinspection PyUnboundLocalVariable
@@ -26,8 +33,6 @@ class Indexer:
     def __init__(self):
 
         self.list = []; self.data = []
-        self.mgreekz_id = 'https://www.youtube.com/channel/UClMj1LyMRBMu_TG1B1BirqQ/'
-        self.mgreekz_id = self.mgreekz_id.replace('https://www.youtube.com/channel', '{0}/channel'.format(YT_ADDON))
         if Addon().getSetting('audio_only') == 'true' and kodi.condVisibility('Window.IsVisible(music)'):
             self.content = 'songs'
             self.infotype = 'music'
@@ -44,42 +49,22 @@ class Indexer:
                 'image': iconname('monitor'),
                 'fanart': 'https://i.ytimg.com/vi/vtjL9IeowUs/maxresdefault.jpg',
                 'isFolder': 'True'
-            }
-            ,
+            },
             {
                 'title': kodi.i18n(30124),
                 'action': 'gm_music',
                 'image': iconname('music'),
                 'fanart': 'https://cdn.allwallpaper.in/wallpapers/1280x720/1895/music-hd-1280x720-wallpaper.jpg',
                 'isFolder': 'True'
+            },
+            {
+                'title': kodi.i18n(30292),
+                'action': 'techno_choices',
+                'url': 'PLZF-_NNdxpb5s1vjh6YSMTyjjlfiZhgbp',
+                'image': kodi.addonInfo('icon'),
+                'fanart': 'https://i.ytimg.com/vi/vtjL9IeowUs/maxresdefault.jpg',
+                'isFolder': 'True'
             }
-            # ,
-            # {
-            #     'title': kodi.i18n(30126),
-            #     'action': 'mgreekz_index',
-            #     'image': 'https://pbs.twimg.com/profile_images/697098521527328772/VY8e_klm_400x400.png',
-            #     'fanart': kodi.addonmedia(
-            #         addonid=ART_ID, theme='networks', path='mgz_fanart.jpg', media_subfolder=False
-            #     ),
-            #     'isFolder': 'False', 'isPlayable': 'False'
-            # }
-            # ,
-            # {
-            #     'title': kodi.i18n(30269),
-            #     'action': 'top50_list',
-            #     'url': 's1GeuATNw9GdvcXYy9Cdl5mLydWZ2lGbh9yL6MHc0RHa',
-            #     'image': kodi.addonInfo('icon'),
-            #     'fanart': 'https://i.ytimg.com/vi/vtjL9IeowUs/maxresdefault.jpg'
-            # }
-            # ,
-            # {
-            #     'title': kodi.i18n(30292),
-            #     'action': 'techno_choices',
-            #     'url': 'PLZF-_NNdxpb5s1vjh6YSMTyjjlfiZhgbp',
-            #     'image': kodi.addonInfo('icon'),
-            #     'fanart': 'https://i.ytimg.com/vi/vtjL9IeowUs/maxresdefault.jpg',
-            #     'isFolder': 'True'
-            # }
         ]
 
         if kodi.condVisibility('Window.IsVisible(music)'):
@@ -89,15 +74,23 @@ class Indexer:
 
     def gm_music(self):
 
-        html = vod.gm_root(GM_MUSIC)
+        resp = Net().http_GET(PLAYLIST_BASE).content
+        try:
+            html = resp.decode('utf-8') if isinstance(resp, bytes) else resp
+        except Exception:
+            html = resp
 
-        options = re.compile(r'(<option  value=.+?</option>)', re.U).findall(html)
+        options = re.compile(r'(<option\s+value=.+?</option>)', re.U).findall(html)
 
         for option in options:
 
             obj = iwrapper(option, 'option').__next__()
-            title = obj.text
-            link = urljoin(vod.GM_BASE, obj.attributes['value'])
+            val = obj.attributes.get('value', '').strip()
+            if not val or val in ['artist', 'album', 'song']:
+                continue
+
+            title = _clean(obj.text)
+            link = f'{PLAYLIST_AJAX}?action=get_artists&id={val}'
 
             data = {
                 'title': title, 'url': link, 'image': iconname('music'), 'action': 'artist_index',
@@ -111,18 +104,20 @@ class Indexer:
     @cache_method(cache_duration(2880))
     def music_list(self, url):
 
-        html = Net().http_GET(url).content
+        resp = Net().http_GET(url).content
 
         try:
-
-            html = html.decode('utf-8')
-
+            resp_str = resp.decode('utf-8') if isinstance(resp, bytes) else resp
+            data_json = json.loads(resp_str)
+            html = data_json.get('html', resp_str)
         except Exception:
-
-            pass
+            html = resp_str if 'resp_str' in locals() else resp
 
         if 'albumlist' in html:
-            artist = [iwrapper(html, 'h4').__next__().text.partition(' <a')[0]]
+            try:
+                artist = [_clean(iwrapper(html, 'h4').__next__().text.partition(' <a')[0])]
+            except Exception:
+                artist = None
         else:
             artist = None
 
@@ -132,32 +127,35 @@ class Indexer:
         if 'songlist' in html:
             songlist = iwrapper(html, 'div', attrs={'class': 'songlist'}).__next__().text
             items = iwrapper(songlist, 'li')
+            target_action = 'get_video'
         elif 'albumlist' in html:
             albumlist = iwrapper(html, 'div', attrs={'class': 'albumlist'}).__next__().text
             items = iwrapper(albumlist, 'li')
+            target_action = 'get_songs'
         else:
             artistlist = iwrapper(html, 'div', attrs={'class': 'artistlist'}).__next__().text
             items = iwrapper(artistlist, 'li')
+            target_action = 'get_albums'
 
-        if 'icon/music' in html:
-            icon = deque(iwrapper(html, 'img', attrs={'class': 'img-responsive'}, ret='src'), maxlen=1).pop()
-            icon = urljoin(vod.GM_BASE, icon)
-        else:
+        try:
+            img_src = iwrapper(html, 'img', attrs={'class': 'img-responsive'}, ret='src').__next__()
+            icon = urljoin(PLAYLIST_BASE, img_src)
+        except Exception:
             icon = iconname('music')
 
         for item in items:
 
-            title = iwrapper(item.text, 'a').__next__().text
-            link = iwrapper(item.text, 'a', ret='href').__next__()
-            link = urljoin(vod.GM_BASE, link)
+            obj = iwrapper(item.text, 'a').__next__()
+            title = _clean(obj.text)
+            data_id = obj.attributes.get('data-id')
+            if not data_id and 'href' in obj.attributes:
+                data_id = obj.attributes['href'].partition('?id=')[2]
 
-            if 'gapi.client.setApiKey' in html:
-                link = gm_source_maker(url)['links'][0]
+            link = f'{PLAYLIST_AJAX}?action={target_action}&id={data_id}'
 
             data = {'title': title, 'url': link, 'image': icon}
 
             if artist:
-
                 data.update({'artist': artist})
 
             self.list.append(data)
@@ -193,7 +191,7 @@ class Indexer:
 
             item.update(
                 {
-                    'action': 'songs_index', 'name': item['title'].partition(' (')[0], 'isFolder': 'True'
+                    'action': 'songs_index', 'name': _clean(item['title'].partition(' (')[0]), 'isFolder': 'True'
                 }
             )
 
@@ -204,6 +202,7 @@ class Indexer:
 
     def songs_index(self, url, album):
 
+        album = _clean(album)
         self.list = self.music_list(url)
 
         for count, item in list(enumerate(self.list, start=1)):
@@ -211,16 +210,16 @@ class Indexer:
             item.update({'action': 'play', 'isFolder': 'False', 'isPlayable': 'True'})
             add_to_playlist = {'title': 30226, 'query': {'action': 'add_to_playlist'}}
             clear_playlist = {'title': 30227, 'query': {'action': 'clear_playlist'}}
-            try:
-                item.update({'cm': [add_to_playlist, clear_playlist], 'album': album.encode('latin-1'), 'tracknumber': count})
-            except:
-                item.update({'cm': [add_to_playlist, clear_playlist], 'album': album, 'tracknumber': count})
+            item.update(
+                {
+                    'cm': [add_to_playlist, clear_playlist],
+                    'album': album,
+                    'tracknumber': count,
+                    'streaminfo': {'codec': 'mp3'},
+                }
+            )
 
         directory.builder(self.list, content=self.content, infotype=self.infotype)
-
-    # def mgreekz_index(self):
-    #
-    #     kodi.execute('Container.Update("{0}")'.format(self.mgreekz_id))
 
     # @cache_method(cache_duration(2880))
     # def _top50(self, url):

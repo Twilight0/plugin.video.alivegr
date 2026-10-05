@@ -169,16 +169,6 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
-				<setting id="show_m3u" type="boolean" label="30495" help="">
-					<level>0</level>
-					<default>false</default>
-					<dependencies>
-						<dependency type="enable">
-							<condition operator="is" setting="show_live">false</condition>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
 <!--				<setting id="show_pvr" type="boolean" label="30149" help="">-->
 <!--					<level>0</level>-->
 <!--					<default>false</default>-->
@@ -285,31 +275,6 @@
 <!--				</setting>-->
 <!--			</group>-->
 			<group id="2" label="30006">
-				<setting id="yt_quality_picker" type="integer" label="30251" help="30437">
-					<level>2</level>
-					<default>0</default>
-					<constraints>
-						<options>
-							<option label="30168">0</option>
-							<option label="30169">1</option>
-						</options>
-					</constraints>
-					<control type="spinner" format="string"/>
-				</setting>
-				<setting id="m3u8_quality_picker" type="integer" label="30219" help="30438">
-					<level>2</level>
-					<default>1</default>
-					<constraints>
-						<options>
-							<option label="30168">0</option>
-<!--							<option label="30169">1</option>-->
-							<option label="30204">1</option>
-						</options>
-					</constraints>
-					<control type="spinner" format="string"/>
-<!--						<heading>30219</heading>-->
-<!--					</control>-->
-				</setting>
 				<setting id="other_addon_settings_ia" type="action" label="30209" help="30342">
 					<level>3</level>
 					<data>Addon.OpenSettings(inputstream.adaptive)</data>
@@ -399,6 +364,11 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
+				<setting id="auto_channel_jump" type="boolean" label="30501" help="30502">
+					<level>0</level>
+					<default>true</default>
+					<control type="toggle"/>
+				</setting>
 				<setting id="episodes_reverse" type="boolean" label="30043" help="30446">
 					<level>3</level>
 					<default>true</default>
@@ -443,12 +413,17 @@
 						<close>true</close>
 					</control>
 				</setting>
-				<setting id="other_addon_settings_yt" type="action" label="30281" help="30451">
-					<level>1</level>
-					<data>Addon.OpenSettings(plugin.video.youtube)</data>
+				<setting id="other_addon_settings_pluginsgr" type="action" label="30503" help="30504">
+					<level>3</level>
+					<data>Addon.OpenSettings(script.module.resolveurl.pluginsgr)</data>
 					<constraints>
 						<allowempty>true</allowempty>
 					</constraints>
+					<dependencies>
+						<dependency type="enable">
+							<condition on="property" name="InfoBool">System.HasAddon(script.module.resolveurl.pluginsgr)</condition>
+						</dependency>
+					</dependencies>
 					<control type="button" format="action">
 						<close>true</close>
 					</control>
@@ -484,6 +459,16 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
+				<setting id="clear_cache" type="action" label="30056" help="30505">
+					<level>0</level>
+					<data>RunPlugin(plugin://plugin.video.alivegr/?action=cache_clear)</data>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<control type="button" format="action">
+						<close>false</close>
+					</control>
+				</setting>
 			</group>
 		</category>
 		<category id="developer" label="30115" help="30435">
@@ -497,13 +482,6 @@
 <!--						</dependency>-->
 <!--					</dependencies>-->
 					<control type="toggle"/>
-				</setting>
-				<setting id="proxy_port" type="integer" label="30119" help="30120">
-					<level>2</level>
-					<default>50199</default>
-					<control type="edit" format="integer">
-						<heading>30121</heading>
-					</control>
 				</setting>
 				<setting id="changelog_lang" type="integer" label="30215" help="30467">
 					<level>0</level>

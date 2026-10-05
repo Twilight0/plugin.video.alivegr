@@ -13,8 +13,7 @@ from . import vod
 from . import live
 from ..modules.themes import iconname
 from ..modules.utils import add_to_file, read_from_file
-from ..modules.constants import QUERY_MAP, SEARCH_HISTORY, GM_SEARCH, GFM_GETTER, GFK_GETTER
-from ..modules.source_makers import gf_source_maker
+from ..modules.constants import QUERY_MAP, SEARCH_HISTORY, GM_SEARCH
 
 
 class Indexer:
@@ -29,10 +28,6 @@ class Indexer:
 
         if category == 'person':
             self.list = vod.Indexer().persons_index(GM_SEARCH, post=post)
-        if category == 'movies':
-            self.list = vod.Indexer().listing(GM_SEARCH, post=post, get_listing=True)
-            self.list.extend(gf_source_maker(GFM_GETTER, search=str_input))
-            self.list.extend(gf_source_maker(GFK_GETTER, search=str_input))
         else:
             self.list = vod.Indexer().listing(GM_SEARCH, post=post, get_listing=True)
 

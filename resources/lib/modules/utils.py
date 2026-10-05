@@ -12,12 +12,14 @@ import pickled
 import sqlite3
 import copy
 from itertags import iwrapper
+import json
+import re
 from tulip import kodi, directory, cleantitle, bookmarks
 from netclient import Net
 from urllib.parse import parse_qsl, urlparse
 from tulip.log import log
 from .themes import iconname
-from .constants import WEBSITE, PINNED, SEARCH_HISTORY, PLAYBACK_HISTORY, cache_duration
+from .constants import WEBSITE, PINNED, SEARCH_HISTORY, PLAYBACK_HISTORY, STREAM_PREFS, cache_duration
 from tulip.kodi import update_repositories
 from os import path
 from time import time
@@ -39,60 +41,6 @@ def stream_picker(links):
     if _choice <= len(links) and not _choice == -1:
         popped = [link[1] for link in links][_choice]
         return popped
-
-
-# def m3u8_picker(url):
-#
-#     try:
-#
-#         if '|' not in url:
-#             raise TypeError
-#
-#         link, _, head = url.rpartition('|')
-#
-#         headers = dict(parse_qsl(head))
-#         streams = m3u8.load(link, headers=headers).playlists
-#
-#     except TypeError:
-#
-#         streams = m3u8.load(url).playlists
-#
-#     if not streams:
-#         return url
-#
-#     qualities = []
-#     urls = []
-#
-#     for stream in streams:
-#
-#         quality = repr(stream.stream_info.resolution).strip('()').replace(', ', 'x')
-#
-#         if quality == 'None':
-#             quality = 'Auto'
-#
-#         uri = stream.absolute_uri
-#
-#         qualities.append(quality)
-#
-#         try:
-#
-#             if '|' not in url:
-#                 raise TypeError
-#
-#             urls.append(uri + ''.join(url.rpartition('|')[1:]))
-#
-#         except TypeError:
-#             urls.append(uri)
-#
-#     if len(qualities) == 1:
-#
-#         kodi.infoDialog(kodi.i18n(30220).format(qualities[0]))
-#
-#         return url
-#
-#     links = list(zip(qualities, urls))
-#
-#     return stream_picker(links)
 
 
 def i18n():
@@ -145,6 +93,8 @@ def cache_clear(notify=True):
 
     log('Cache has been cleared')
     reset_cache()
+    if notify:
+        kodi.infoDialog(kodi.i18n(30402))
 
 
 def purge_bookmarks():
@@ -327,6 +277,52 @@ def unpin(query):
     kodi.infoDialog(kodi.i18n(30338), time=750)
 
     kodi.idle()
+
+
+def get_all_stream_prefs():
+    """Retrieve all stream preferences from JSON file as a dict."""
+    if not kodi.exists(STREAM_PREFS):
+        return {}
+    try:
+        with open(STREAM_PREFS, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        log(f"Error loading stream preferences: {e}")
+        return {}
+
+
+def get_stream_pref(title, prefs=None):
+    """Retrieve stream preference (index or None) for a channel title with fuzzy matching."""
+    if prefs is None:
+        prefs = get_all_stream_prefs()
+    if not prefs or not title:
+        return None
+    if title in prefs:
+        return prefs[title]
+    t_lower = title.lower().strip()
+    for k, v in prefs.items():
+        if k.lower().strip() == t_lower:
+            return v
+    # Handle sport vs sports variation
+    t_sport = re.sub(r'\bsports\b', 'sport', t_lower)
+    for k, v in prefs.items():
+        k_sport = re.sub(r'\bsports\b', 'sport', k.lower().strip())
+        if k_sport == t_sport:
+            return v
+    return None
+
+
+def set_stream_pref(title, index):
+    """Save stream preference index for a channel title."""
+    if not kodi.exists(STREAM_PREFS):
+        kodi.makeFiles(kodi.dataPath)
+    prefs = get_all_stream_prefs()
+    prefs[title] = index
+    try:
+        with open(STREAM_PREFS, 'w', encoding='utf-8') as f:
+            json.dump(prefs, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        log(f"Error saving stream preferences: {e}")
 
 
 def setup_various_keymaps(keymap):
@@ -669,11 +665,7 @@ def pp():
 
 def disclaimer():
 
-    try:
-        text = kodi.addonInfo('disclaimer').decode('utf-8')
-    except (UnicodeEncodeError, UnicodeDecodeError, AttributeError):
-        text = kodi.addonInfo('disclaimer')
-
+    text = kodi.addonInfo('disclaimer')
     kodi.dialog.textviewer(kodi.addonInfo('name') + ', ' + kodi.i18n(30129), text)
 
 

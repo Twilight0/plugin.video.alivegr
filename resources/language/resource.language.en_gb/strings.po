@@ -486,18 +486,6 @@ msgctxt "#30118"
 msgid "fiction"
 msgstr ""
 
-msgctxt "#30119"
-msgid "Localhost proxy port"
-msgstr ""
-
-msgctxt "#30120"
-msgid "This setting is used to change the port of the localhost proxy server, if you don't know what this means, just leave it as it is"
-msgstr ""
-
-msgctxt "#30121"
-msgid "Edit this to a number not used by any other service on your system"
-msgstr ""
-
 msgctxt "#30122"
 msgid ""
 msgstr ""
@@ -507,7 +495,7 @@ msgid "News"
 msgstr ""
 
 msgctxt "#30124"
-msgid "GM Index"
+msgid "Playlist.gr Index"
 msgstr ""
 
 msgctxt "#30125"
@@ -1747,9 +1735,23 @@ msgid "[COLOR white]PluginsGR version:[/COLOR]{0}[COLOR grey]{1}[/COLOR]"
 msgstr ""
 
 msgctxt "#30501"
-msgid ""
+msgid "Auto-jump to next channel on failure"
 msgstr ""
 
 msgctxt "#30502"
-msgid ""
+msgid "Automatically try alternative streams and jump to next channel if playback fails"
 msgstr ""
+
+msgctxt "#30503"
+msgid "PluginsGR settings"
+msgstr ""
+
+msgctxt "#30504"
+msgid "This button will open PluginsGR settings, where you can configure the proxy port and YouTube video codecs"
+msgstr ""
+
+msgctxt "#30505"
+msgid "Clear cached function results and web responses"
+msgstr ""
+
+

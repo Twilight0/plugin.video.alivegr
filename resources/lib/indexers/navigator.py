@@ -42,14 +42,6 @@ class Indexer:
             }
             # ,
             # {
-            #     'title': kodi.i18n(30001),
-            #     'action': 'live_m3u',
-            #     'icon': iconname('monitor'),
-            #     'show_item': kodi.setting('show_live') == 'false' and kodi.setting('show_m3u') == 'true',
-            #     'isFolder': 'False' if kodi.setting('live_tv_mode') == '1' else 'True', 'isPlayable': 'False'
-            # }
-            # ,
-            # {
             #     'title': kodi.i18n(30036),
             #     'action': 'pvr_client',
             #     'icon': iconname('guide'),

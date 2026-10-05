@@ -8,9 +8,6 @@
 from tulip import kodi, directory
 from ..modules.themes import iconname
 from .vod import GM_BASE
-from ..modules.utils import thgiliwt
-from tulip.utils import py3_dec
-from ..modules.constants import GFK_GETTER
 
 
 class Indexer:
@@ -21,8 +18,6 @@ class Indexer:
         self.data = []
 
     def kids(self):
-
-        print(py3_dec(thgiliwt(GFK_GETTER)))
 
         self.list = [
             {
@@ -35,8 +30,7 @@ class Indexer:
             {
                 'title': kodi.i18n(30073),
                 'action': 'listing',
-                # 'url': ''.join([GM_BASE, 'movies.php?g=8&y=&l=&p=']),
-                'url': py3_dec(thgiliwt(GFK_GETTER)),
+                'url': ''.join([GM_BASE, 'movies.php?g=8&y=&l=&p=']),
                 'icon': iconname('cartoon_movies'),
                 'isFolder': 'True'
             }

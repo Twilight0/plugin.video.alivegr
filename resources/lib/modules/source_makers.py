@@ -1,18 +1,12 @@
-import json
 import re
-import binascii
-from urllib.parse import urljoin, urlparse, parse_qsl
-from fuzzywuzzy import fuzz
+from urllib.parse import urljoin, urlparse
 from tulip import kodi, cleantitle
 from netclient import Net
-from useragents import spoofer
 from itertags import iwrapper
 from scrapetube.wrapper import list_search
 from ..modules.constants import (
     cache_function, cache_duration, GM_BASE
 )
-from ..modules.utils import thgiliwt
-from tulip.utils import py3_dec
 from tulip.log import log
 
 
@@ -72,11 +66,12 @@ def gm_source_maker(url):
 
     elif 'view' in url:
 
-        link = iwrapper(html, 'a', ret='href', attrs={"class": "btn btn-primary"}).__next__()
-        host = urlparse(link).netloc.replace('www.', '').capitalize()
-        title = iwrapper(html, 'h3').__next__().text
+        try:
+            title = iwrapper(html, 'h3').__next__().text
+        except Exception:
+            title = ''
 
-        return {'links': [(''.join([kodi.i18n(30015), host]), link)], 'title': title}
+        return {'links': [(kodi.i18n(30015), url)], 'title': title}
 
     elif 'music' in url:
 
@@ -151,6 +146,19 @@ def gm_source_maker(url):
 
         data = {'links': links_list, 'genre': genre, 'title': title}
 
+        try:
+            year_match = re.search(r'Έτος:\s*(\d{4})', html)
+            if year_match:
+                data['year'] = int(year_match.group(1))
+        except Exception:
+            pass
+
+        try:
+            img = iwrapper(html, 'img', attrs={'class': 'thumbnail img-responsive'}, ret='src').__next__()
+            data['image'] = urljoin(GM_BASE, img)
+        except Exception:
+            pass
+
         if 'text-align: justify' in html:
             plot = iwrapper(html, 'p', attrs={'style': 'text-align: justify'}).__next__().text
         elif 'text-justify' in html:
@@ -168,103 +176,3 @@ def gm_source_maker(url):
             data.update({'code': code})
 
         return data
-
-
-@cache_function(cache_duration(360))
-def gf_source_maker(var, url=None, title=None, search=None):
-
-    data = None
-    gf_movies_list = gist_getter(var)
-
-    if url:
-
-        index = int(dict(parse_qsl(urlparse(url).query)).get('id', 0))
-
-        item = [i for i in gf_movies_list if i['index'] == index][0]
-        links = item['urls']
-        hosts = [''.join([kodi.i18n(30015), urlparse(i).netloc.split('.')[0].capitalize()]) for i in links]
-        plot = item['plot']
-        genre = item.get('genre', [kodi.i18n(30089)])
-
-        data = {
-            'links': list(zip(hosts, links)), 'plot': plot, 'genre': genre, 'year': item['year'],
-            'title': item['title'], 'label': item['label'], 'image': spoofer(item['image'])
-        }
-
-    elif title:
-
-        try:
-
-            for i in gf_movies_list:
-                score = fuzz.ratio(i['title'].lower(), title.lower())
-                if score <= 70:
-                    score = fuzz.ratio(i['label'].lower(), title.lower())
-                if score >= 71:
-                    log(f"Match found! Score for '{i['title']}' vs '{title}': {score}")
-                    item = i
-                    break
-            else:
-                raise IndexError
-
-            links = item['urls']
-            hosts = [''.join([kodi.i18n(30015), urlparse(i).netloc.split('.')[0].capitalize()]) for i in item['urls']]
-            plot = item['plot']
-            genre = item.get('genre', [kodi.i18n(30089)])
-    
-            data = {
-                'links': list(zip(hosts, links)), 'plot': plot, 'genre': genre, 'year': item['year'],
-                'title': item['title'], 'label': item['label'], 'image': spoofer(item['image'])
-            }
-
-        except (IndexError, KeyError):
-
-            pass
-
-    elif search:
-
-        log('Initiating search')
-
-
-        try:
-
-            # items = [
-            #     dict(
-            #         i, image=spoofer(i.get('image') or 'https://openclipart.org/image/800px/144715')
-            #     ) for i in gf_movies_list if fuzz.ratio(i['title'], search) >= 50
-            # ]
-
-            items = []
-            for i in gf_movies_list:
-                score = fuzz.ratio(i['title'].lower(), search.lower())
-                if score <= 50:
-                    score = fuzz.ratio(i['label'].lower(), search.lower())
-                if score >= 51:
-                    log(f"Match found! Score for '{i['title']}' vs '{search}': {score}")
-                    items.append(
-                        dict(
-                            i, image=spoofer(i.get('image') or 'https://openclipart.org/image/800px/144715')
-                        )
-                    )
-    
-            return items
-
-        except (IndexError, KeyError) as e:
-
-            log(f'Error in {__name__}: {e}')
-            return []
-
-    # noinspection PyUnboundLocalVariable
-    return data
-
-
-@cache_function(cache_duration(360))
-def gist_getter(var):
-
-    try:
-        result = Net().http_GET(
-            py3_dec(thgiliwt(var))
-        ).content
-    except binascii.Error:
-        result = Net().http_GET(var).content
-
-    return json.loads(result)

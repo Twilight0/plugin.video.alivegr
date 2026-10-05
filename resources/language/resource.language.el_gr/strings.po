@@ -486,18 +486,6 @@ msgctxt "#30118"
 msgid "fiction"
 msgstr "μυθοπλασία"
 
-msgctxt "#30119"
-msgid "Localhost proxy port"
-msgstr "Θύρα διακομιστή μεσολάβησης localhost"
-
-msgctxt "#30120"
-msgid "This setting is used to change the port of the localhost proxy server, if you don't know what this means, just leave it as it is"
-msgstr "Αυτή η ρύθμιση χρησιμοποιείται για την αλλαγή της θύρας του διακομιστή μεσολάβησης localhost, εάν δεν ξέρετε τι σημαίνει αυτό, απλώς αφήστε το ως έχει"
-
-msgctxt "#30121"
-msgid "Edit this to a number not used by any other service on your system"
-msgstr "Επεξεργαστείτε αυτό σε έναν αριθμό που δεν χρησιμοποιείται από καμία άλλη υπηρεσία στο σύστημά σας"
-
 msgctxt "#30122"
 msgid ""
 msgstr ""
@@ -507,8 +495,8 @@ msgid "News"
 msgstr "Ειδήσεις"
 
 msgctxt "#30124"
-msgid "GM Index"
-msgstr "Το ευρετήριο του GM"
+msgid "Playlist.gr Index"
+msgstr "Το ευρετήριο του Playlist.gr"
 
 msgctxt "#30125"
 msgid "Music"
@@ -1747,9 +1735,23 @@ msgid "[COLOR white]PluginsGR version:[/COLOR]{0}[COLOR grey]{1}[/COLOR]"
 msgstr "[COLOR white]Έκδοση PluginsGR:[/COLOR]{0}[COLOR grey]{1}[/COLOR]"
 
 msgctxt "#30501"
-msgid ""
-msgstr ""
+msgid "Auto-jump to next channel on failure"
+msgstr "Αυτόματη μετάβαση στο επόμενο κανάλι σε αποτυχία"
 
 msgctxt "#30502"
-msgid ""
-msgstr ""
+msgid "Automatically try alternative streams and jump to next channel if playback fails"
+msgstr "Αυτόματη δοκιμή εναλλακτικών ροών και μετάβαση στο επόμενο κανάλι σε περίπτωση αποτυχίας αναπαραγωγής"
+
+msgctxt "#30503"
+msgid "PluginsGR settings"
+msgstr "Ρυθμίσεις PluginsGR"
+
+msgctxt "#30504"
+msgid "This button will open PluginsGR settings, where you can configure the proxy port and YouTube video codecs"
+msgstr "Αυτό το πλήκτρο θα ανοίξει τις ρυθμίσεις του PluginsGR, όπου μπορείτε να ρυθμίσετε τη θύρα του διαμεσολαβητή και τους κωδικοποιητές βίντεο του YouTube"
+
+msgctxt "#30505"
+msgid "Clear cached function results and web responses"
+msgstr "Καθαρισμός αποθηκευμένων αποτελεσμάτων λειτουργιών και απαντήσεων ιστού"
+
+
