@@ -561,5 +561,4 @@ class Indexer:
             pl.add(query_str, it)
 
         kodi.player().play(pl, None, False, target_idx)
-        kodi.execute('PlayerControl(RepeatAll)')
 

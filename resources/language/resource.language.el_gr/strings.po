@@ -1762,4 +1762,12 @@ msgctxt "#30507"
 msgid "IPTV Simple Client setup"
 msgstr "Ρύθμιση IPTV Simple Client"
 
+msgctxt "#30508"
+msgid "Kodi player repeat mode"
+msgstr "Λειτουργία επανάληψης αναπαραγωγέα Kodi"
+
+msgctxt "#30509"
+msgid "Toggle Kodi player repeat mode on or off. Keep disabled to prevent single videos from repeating indefinitely."
+msgstr "Ενεργοποίηση ή απενεργοποίηση της λειτουργίας επανάληψης του Kodi. Διατηρήστε το απενεργοποιημένο για να αποφύγετε τη συνεχή επανάληψη μεμονωμένων βίντεο."
+
 

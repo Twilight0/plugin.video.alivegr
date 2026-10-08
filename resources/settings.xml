@@ -497,6 +497,11 @@
 						<heading>30215</heading>
 					</control>
 				</setting>
+				<setting id="repeat_mode" type="boolean" label="30508" help="30509">
+					<level>0</level>
+					<default>false</default>
+					<control type="toggle"/>
+				</setting>
 			</group>
 			<group id="2">
 				<setting id="debug" type="boolean" label="30470" help="">

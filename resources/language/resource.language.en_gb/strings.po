@@ -1762,4 +1762,12 @@ msgctxt "#30507"
 msgid "IPTV Simple Client setup"
 msgstr ""
 
+msgctxt "#30508"
+msgid "Kodi player repeat mode"
+msgstr ""
+
+msgctxt "#30509"
+msgid "Toggle Kodi player repeat mode on or off. Keep disabled to prevent single videos from repeating indefinitely."
+msgstr ""
+
 

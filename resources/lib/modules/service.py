@@ -25,7 +25,6 @@ class AliveGRPlayer(xbmc.Player):
         super(AliveGRPlayer, self).__init__()
         self.service = service
         self.live_populated = False
-        self.repeat_set = False
 
     def onAVStarted(self):
         self.handle_playback_started()
@@ -43,7 +42,6 @@ class AliveGRPlayer(xbmc.Player):
         if pl.size() != 1:
             if pl.size() > 1:
                 self.live_populated = True
-                self.repeat_set = True
             return
 
         current_title = (
@@ -124,9 +122,6 @@ class AliveGRPlayer(xbmc.Player):
             q, it = build_entry(channels[i])
             pl.add(q, it)
 
-        xbmc.executebuiltin('PlayerControl(RepeatAll)')
-        self.repeat_set = True
-
         xbmc.log(
             f'AliveGR Service: Zapping playlist populated with {len(channels)} channels '
             f'(active channel: #{current_idx} "{channels[current_idx].get("title")}", pl size: {pl.size()})',
@@ -139,9 +134,6 @@ class AliveGRPlayer(xbmc.Player):
             xbmcgui.Window(10000).clearProperty('alivegr_playing_title')
         except Exception:
             pass
-        if self.repeat_set:
-            self.repeat_set = False
-            xbmc.executebuiltin('PlayerControl(RepeatOff)')
         self.service.onPlayBackStopped()
 
     def onPlayBackEnded(self):
@@ -150,9 +142,6 @@ class AliveGRPlayer(xbmc.Player):
             xbmcgui.Window(10000).clearProperty('alivegr_playing_title')
         except Exception:
             pass
-        if self.repeat_set:
-            self.repeat_set = False
-            xbmc.executebuiltin('PlayerControl(RepeatOff)')
         self.service.onPlayBackEnded()
 
 
@@ -163,10 +152,27 @@ class AliveGRService(xbmc.Monitor):
         super(AliveGRService, self).__init__()
         self.addon = xbmcaddon.Addon(__addon_id__)
         self.auto_start = self.addon.getSetting('auto_start') == 'true'
+        self.repeat_mode = self.addon.getSetting('repeat_mode') == 'true'
         self.player = AliveGRPlayer(self)
+
+        self.validate_repeat_mode()
 
         if self.auto_start:
             self.launch_logic()
+
+    def validate_repeat_mode(self):
+        # Kodi repeats if Playlist.IsRepeat or Playlist.IsRepeatOne is true
+        is_repeat = (
+            xbmc.getCondVisibility('Playlist.IsRepeat')
+            or xbmc.getCondVisibility('Playlist.IsRepeatOne')
+        )
+        setting_repeat = self.addon.getSetting('repeat_mode') == 'true'
+
+        if setting_repeat != is_repeat:
+            if setting_repeat:
+                xbmc.executebuiltin('PlayerControl(RepeatAll)')
+            else:
+                xbmc.executebuiltin('PlayerControl(RepeatOff)')
 
     def onSettingsChanged(self):
 
@@ -177,6 +183,14 @@ class AliveGRService(xbmc.Monitor):
             self.launch_logic()
 
         self.auto_start = new_val
+
+        new_repeat = self.addon.getSetting('repeat_mode') == 'true'
+        if new_repeat != self.repeat_mode:
+            self.repeat_mode = new_repeat
+            if new_repeat:
+                xbmc.executebuiltin('PlayerControl(RepeatAll)')
+            else:
+                xbmc.executebuiltin('PlayerControl(RepeatOff)')
 
         if __addon_id__ in xbmc.getInfoLabel('Container.PluginName'):
             xbmc.executebuiltin('Container.Refresh')
