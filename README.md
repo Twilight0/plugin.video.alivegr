@@ -6,7 +6,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](LICENSES/GPL-3.0-only)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Twilight0/plugin.video.alivegr/master/resources/media/icon.png" alt="AliveGR Logo" width="220"/>
+  <img src="https://raw.githubusercontent.com/Twilight0/plugin.video.alivegr/master/icon.png" alt="AliveGR Logo" width="220"/>
 </p>
 
 ### *Your one addon for everything Greek-related on Kodi*
