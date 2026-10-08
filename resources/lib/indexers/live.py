@@ -9,7 +9,7 @@ import re
 import json
 from urllib.parse import urlencode
 from datetime import datetime
-from tulip import directory, kodi
+from tulip import directory, kodi, cleantitle
 from netclient import Net
 from useragents import get_ua
 from tulip.utils import py3_dec
@@ -253,7 +253,11 @@ class Indexer:
             else:
                 pin_cm = {'title': 30336, 'query': {'action': 'pin', 'query': item['title']}}
 
-            menu = [pin_cm]
+            zap_cm = {
+                'title': 30506,
+                'query': {'action': 'zap_from_here', 'title': item['title'], 'group': kodi.setting('live_group')}
+            }
+            menu = [pin_cm, zap_cm]
 
             # If channel has alternative streams, add "Choose Stream" context menu
             item_streams = item.get('streams')
@@ -304,7 +308,16 @@ class Indexer:
 
         if query:
 
-            queried_list = [i for i in live_data if query in i['title'].lower()]
+            q_lower = query.lower()
+            try:
+                q_trans = cleantitle.transliterate(query).lower()
+            except Exception:
+                q_trans = ''
+
+            queried_list = [
+                i for i in live_data
+                if q_lower in i['title'].lower() or (q_trans and q_trans in i['title'].lower())
+            ]
 
             return queried_list
 
@@ -383,7 +396,11 @@ class Indexer:
                     pass
 
             pin_cm = {'title': 30336, 'query': {'action': 'pin'}}
-            menu = [pin_cm]
+            zap_cm = {
+                'title': 30506,
+                'query': {'action': 'zap_from_here', 'title': item['title'], 'modular_group': group}
+            }
+            menu = [pin_cm, zap_cm]
 
             # If channel has alternative streams, add "Choose Stream" context menu
             if item_streams:
@@ -481,3 +498,68 @@ class Indexer:
 
         # Refresh directory listing to apply new primary URL immediately
         kodi.refresh()
+
+
+    @staticmethod
+    def zap_from_here(params):
+        title = params.get('title')
+        modular_group = params.get('modular_group')
+        group = params.get('group')
+
+        if modular_group:
+            channel_list, _ = Indexer().live()
+            channels = [item for item in channel_list if item['group'] == modular_group]
+            channels.sort(key=lambda k: k['title'].lower())
+            stream_prefs = get_all_stream_prefs()
+            for idx, item in enumerate(channels):
+                pref_idx = get_stream_pref(item['title'], stream_prefs)
+                item_streams = item.get('streams')
+                if item_streams:
+                    try:
+                        parsed_s = json.loads(item_streams)
+                        if pref_idx is not None and isinstance(pref_idx, int) and 0 <= pref_idx < len(parsed_s):
+                            preferred_url = parsed_s[pref_idx]
+                            item['url'] = preferred_url
+                    except Exception:
+                        pass
+        else:
+            channels = get_live_channel_list(group) if group else get_live_channel_list()
+
+        if not channels:
+            return
+
+        target_idx = 0
+        if title:
+            for idx, ch in enumerate(channels):
+                if ch.get('title') == title or ch.get('title', '').strip().lower() == title.strip().lower():
+                    target_idx = idx
+                    break
+
+        from urllib.parse import quote_plus
+        sysaddon = 'plugin://plugin.video.alivegr/'
+
+        pl = kodi.playlist(1)
+        pl.clear()
+
+        for item in channels:
+            action = f"{sysaddon}?action=play"
+            url_p = f"url={quote_plus(item['url'])}" if item.get('url') else None
+            title_p = f"title={quote_plus(item['title'])}" if item.get('title') else None
+            image_p = f"image={quote_plus(item['image'])}" if item.get('image') else None
+            streams_p = f"streams={quote_plus(item['streams'])}" if item.get('streams') else None
+            plot_p = f"plot={quote_plus(item['plot'])}" if item.get('plot') else None
+            genre_p = f"genre={quote_plus(item['genre'])}" if item.get('genre') else None
+            parts = [q for q in [action, url_p, title_p, image_p, streams_p, plot_p, genre_p] if q]
+            query_str = '&'.join(parts)
+
+            it = kodi.item(label=item.get('title', ''))
+            it.setProperty('IsPlayable', 'true')
+            if item.get('image'):
+                it.setArt({'icon': item['image'], 'thumb': item['image'], 'poster': item['image']})
+            if item.get('plot'):
+                it.setInfo('video', {'title': item.get('title', ''), 'plot': item.get('plot', '')})
+            pl.add(query_str, it)
+
+        kodi.player().play(pl, None, False, target_idx)
+        kodi.execute('PlayerControl(RepeatAll)')
+

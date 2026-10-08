@@ -6,7 +6,7 @@
 <!--        <import addon="resource.images.alivegr.logos" version="1.0.2"/>-->
         <import addon="script.module.resolveurl" version="5.1.210"/>
         <import addon="script.module.resolveurl.pluginsgr" version="0.2.5"/>
-        <import addon="script.module.urldispatcher" version="1.1.0"/>
+<!--        <import addon="script.module.urldispatcher" version="1.1.0"/>-->
         <import addon="script.module.scrapetube" version="2.8.0"/>
         <import addon="script.module.netclient" version="1.1.2"/>
         <import addon="script.module.unicache" version="1.0.0"/>

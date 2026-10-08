@@ -5,9 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSES/GPL-3.0-only for more information.
 
-import json
-
-from urllib.parse import quote, quote_plus
+from urllib.parse import quote
 from tulip import directory, kodi, cleantitle
 from . import vod
 from . import live
@@ -52,9 +50,15 @@ class Indexer:
 
         if history:
 
-            search_history = [
-                {
-                    'title': i.split(',')[1] + ' (' + kodi.i18n(QUERY_MAP.get(i.split(',')[0])) + ')',
+            search_history = []
+            for i in history:
+                if not i.strip() or ',' not in i:
+                    continue
+                cat, _, term = i.partition(',')
+                cat_label = QUERY_MAP.get(cat)
+                label_text = kodi.i18n(cat_label) if cat_label else cat
+                search_history.append({
+                    'title': term + ' (' + label_text + ')',
                     'action': 'search', 'query': i,
                     'cm': [
                         add_to_search_history_cm,
@@ -62,23 +66,23 @@ class Indexer:
                         {'title': 30494, 'query': {'action': 'change_search_term', 'query': i}},
                         refresh_cm
                     ]
-                } for i in history
-            ]
+                })
 
             for i in search_history:
-                if i['query'].split(',')[0] == 'Live TV Channel':
+                cat, _, _ = i['query'].partition(',')
+                if cat == 'Live TV Channel':
                     i.update({'image': iconname('monitor'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'TV Serie':
+                elif cat == 'TV Serie':
                     i.update({'image': iconname('series'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'TV Show':
+                elif cat == 'TV Show':
                     i.update({'image': iconname('shows'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'Movie':
+                elif cat == 'Movie':
                     i.update({'image': iconname('movies'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'Theater':
+                elif cat == 'Theater':
                     i.update({'image': iconname('theater'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'Cartoon':
+                elif cat == 'Cartoon':
                     i.update({'image': iconname('kids'), 'isFolder': 'True'})
-                elif i['query'].split(',')[0] == 'Person':
+                elif cat == 'Person':
                     i.update({'image': iconname('user'), 'isFolder': 'True'})
 
             self.list.extend(search_history)
@@ -88,8 +92,8 @@ class Indexer:
     def search(self, action, query=None):
 
         if query is not None:
-            choice = list(QUERY_MAP.keys()).index(query.split(',')[0])
-            str_input = query.split(',')[1]
+            cat, _, str_input = query.partition(',')
+            choice = list(QUERY_MAP.keys()).index(cat) if cat in QUERY_MAP else None
         else:
             choice = None
             str_input = None
@@ -120,12 +124,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = live.Indexer().live_tv(query=str_input.lower())
-
             if query:
+                self.list = live.Indexer().live_tv(query=str_input.lower())
                 directory.builder(self.list)
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='Live TV Channel,{0}'.format(str_input))
 
         elif choice == 1:
 
@@ -146,12 +149,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'movies')
-
             if query:
+                self.list = self.wrapper(str_input, 'movies')
                 directory.builder(self.list, content='movies')
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='Movie,{0}'.format(str_input))
 
         elif choice == 2:
 
@@ -162,7 +164,6 @@ class Indexer:
                 )
 
                 if not str_input:
-
                     return
 
                 str_input = cleantitle.strip_accents(str_input)
@@ -173,12 +174,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'series')
-
             if query is not None:
+                self.list = self.wrapper(str_input, 'series')
                 directory.builder(self.list, content='tvshows')
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='TV Serie,{0}'.format(str_input))
 
         elif choice == 3:
 
@@ -189,7 +189,6 @@ class Indexer:
                 )
 
                 if not str_input:
-
                     return
 
                 str_input = cleantitle.strip_accents(str_input)
@@ -200,12 +199,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'shows')
-
             if query is not None:
+                self.list = self.wrapper(str_input, 'shows')
                 directory.builder(self.list, content='tvshows')
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='TV Show,{0}'.format(str_input))
 
         elif choice == 4:
 
@@ -216,7 +214,6 @@ class Indexer:
                 )
 
                 if not str_input:
-
                     return
 
                 try:
@@ -230,12 +227,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'theater')
-
             if query is not None:
+                self.list = self.wrapper(str_input, 'theater')
                 directory.builder(self.list, content='movies')
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='Theater,{0}'.format(str_input))
 
         elif choice == 5:
 
@@ -245,7 +241,6 @@ class Indexer:
                 )
 
                 if not str_input:
-
                     return
 
                 str_input = cleantitle.strip_accents(str_input)
@@ -256,12 +251,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'animation')
-
             if query is not None:
+                self.list = self.wrapper(str_input, 'animation')
                 directory.builder(self.list, content='tvshows')
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='Cartoon,{0}'.format(str_input))
 
         elif choice == 6:
 
@@ -272,7 +266,6 @@ class Indexer:
                 )
 
                 if not str_input:
-
                     return
 
                 str_input = cleantitle.strip_accents(str_input)
@@ -283,12 +276,11 @@ class Indexer:
                 kodi.refresh()
                 return
 
-            self.list = self.wrapper(str_input, 'person')
-
             if query is not None:
+                self.list = self.wrapper(str_input, 'person')
                 directory.builder(self.list)
             else:
-                directory.run_builtin(action='generic_index', query=quote_plus(json.dumps(self.list)))
+                directory.run_builtin(action='search', query='Person,{0}'.format(str_input))
 
         else:
 

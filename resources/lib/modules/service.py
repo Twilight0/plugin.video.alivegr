@@ -43,6 +43,7 @@ class AliveGRPlayer(xbmc.Player):
         if pl.size() != 1:
             if pl.size() > 1:
                 self.live_populated = True
+                self.repeat_set = True
             return
 
         current_title = (

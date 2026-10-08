@@ -104,6 +104,14 @@ class Indexer:
             }
             ,
             {
+                'title': kodi.i18n(30507),
+                'action': 'setup_iptv',
+                'icon': iconname('guide'),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
                 'title': kodi.i18n(30320) + ': ' + kodi.i18n(30272),
                 'action': 'input_stream_addons',
                 'icon': iconname('monitor'),

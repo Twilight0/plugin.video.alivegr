@@ -8,7 +8,7 @@
 from sys import argv
 from urllib.parse import parse_qsl
 
-from resources.lib.modules import utils, helpers, player
+from resources.lib.modules import utils, helpers, player, iptv
 from resources.lib.indexers import (
     navigator, settings, live, vod, kids, music, bookmarks, search
 )
@@ -65,6 +65,14 @@ def route():
     elif action == 'live_m3u':
 
         live.Indexer().live_m3u()
+
+    elif action == 'pvr_client':
+
+        iptv.launch_or_setup()
+
+    elif action in ['setup_iptv', 'sync_iptv']:
+
+        iptv.setup_iptv()
 
     elif action == 'movies':
 
@@ -243,6 +251,10 @@ def route():
     elif action == 'live_stream_picker':
 
         live.Indexer.live_stream_picker(params)
+
+    elif action == 'zap_from_here':
+
+        live.Indexer.zap_from_here(params)
 
     elif action == 'vod_switcher':
 

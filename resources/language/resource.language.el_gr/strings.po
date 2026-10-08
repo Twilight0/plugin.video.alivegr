@@ -1754,4 +1754,12 @@ msgctxt "#30505"
 msgid "Clear cached function results and web responses"
 msgstr "Καθαρισμός αποθηκευμένων αποτελεσμάτων λειτουργιών και απαντήσεων ιστού"
 
+msgctxt "#30506"
+msgid "Zap from here"
+msgstr "Ζάπινγκ από εδώ"
+
+msgctxt "#30507"
+msgid "IPTV Simple Client setup"
+msgstr "Ρύθμιση IPTV Simple Client"
+
 

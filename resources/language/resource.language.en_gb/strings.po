@@ -1754,4 +1754,12 @@ msgctxt "#30505"
 msgid "Clear cached function results and web responses"
 msgstr ""
 
+msgctxt "#30506"
+msgid "Zap from here"
+msgstr ""
+
+msgctxt "#30507"
+msgid "IPTV Simple Client setup"
+msgstr ""
+
 

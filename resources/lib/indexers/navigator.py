@@ -40,14 +40,15 @@ class Indexer:
                 'show_item': self.get_setting('show_live') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
             }
-            # ,
-            # {
-            #     'title': kodi.i18n(30036),
-            #     'action': 'pvr_client',
-            #     'icon': iconname('guide'),
-            #     'show_item': kodi.setting('show_pvr') == 'true'
-            # }
-            # ,
+            ,
+            {
+                'title': kodi.i18n(30036),
+                'action': 'pvr_client',
+                'icon': iconname('guide'),
+                'show_item': self.get_setting('show_pvr') == 'true',
+                'isFolder': 'False', 'isPlayable': 'False'
+            }
+            ,
             # {
             #     'title': kodi.i18n(30008),
             #     'action': 'networks',
@@ -61,7 +62,7 @@ class Indexer:
             #     'icon': iconname('news'),
             #     'show_item': kodi.setting('show_news') == 'true'
             # }
-            ,
+            # ,
             {
                 'title': kodi.i18n(30031),
                 'action': 'movies',

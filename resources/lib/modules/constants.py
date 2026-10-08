@@ -117,6 +117,8 @@ PINNED = join(dataPath, 'pinned.txt')
 SEARCH_HISTORY = join(dataPath, 'search_history.csv')
 PLAYBACK_HISTORY = join(dataPath, 'playback_history.list')
 STREAM_PREFS = join(dataPath, 'stream_preferences.json')
+ALIVEGR_M3U = join(dataPath, 'alivegr.m3u')
+GREEK_EPG_XML = 'https://ext.greektv.app/epg/epg.xml.gz'
 
 ########################################################################################################################
 
