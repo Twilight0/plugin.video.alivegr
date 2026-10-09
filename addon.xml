@@ -39,7 +39,7 @@ Kindly note that AliveGR is not an official part of the media player you are run
         <license>GPL-3.0-only</license>
         <forum>https://github.com/Twilight0/plugin.video.alivegr/discussions</forum>
         <source>https://github.com/Twilight0/plugin.video.alivegr</source>
-        <website>https://alivegr.net/</website>
+        <website>https://alivegr.app/</website>
         <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 04-10-2026[/I]
 - Update live TV section with new channels, fewer groups, and new remote source
 - Support per-stream schema for live TV with individual DRM key and HTTP header pairs
