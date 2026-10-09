@@ -122,8 +122,7 @@ If you appreciate the time and continuous maintenance that goes into AliveGR, co
 
 ## 💬 Community & Bug Reporting
 
-* **Discussions & Feature Requests**: [GitHub Discussions](https://github.com/Twilight0/plugin.video.alivegr/discussions)
-* **Issue Tracker**: [GitHub Issues](https://github.com/Twilight0/plugin.video.alivegr/issues)
+* **Discussions, Feature Requests & Bug Reporting**: [GitHub Discussions](https://github.com/Twilight0/plugin.video.alivegr/discussions)
 * **Website**: [alivegr.app](https://alivegr.app/)
 
 > **Disclaimer**: The author of AliveGR does not host, stream, or distribute any of the media content displayed within this software. All streams and on-demand links are parsed from publicly available domains on the internet. AliveGR acts strictly as a directory and search client.
