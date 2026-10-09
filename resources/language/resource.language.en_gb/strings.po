@@ -1770,4 +1770,17 @@ msgctxt "#30509"
 msgid "Toggle Kodi player repeat mode on or off. Keep disabled to prevent single videos from repeating indefinitely."
 msgstr ""
 
+msgctxt "#30510"
+msgid "[COLOR white]Website:[/COLOR]{0}[COLOR cyan]alivegr.app[/COLOR]"
+msgstr ""
+
+msgctxt "#30511"
+msgid "[COLOR white]Ko-fi:[/COLOR]{0}[COLOR cyan]ko-fi.com/twilight0[/COLOR]"
+msgstr ""
+
+msgctxt "#30512"
+msgid "[COLOR white]Patreon:[/COLOR]{0}[COLOR cyan]patreon.com/twilight0[/COLOR]"
+msgstr ""
+
+
 

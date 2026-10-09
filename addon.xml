@@ -40,7 +40,13 @@ Kindly note that AliveGR is not an official part of the media player you are run
         <forum>https://github.com/Twilight0/plugin.video.alivegr/discussions</forum>
         <source>https://github.com/Twilight0/plugin.video.alivegr</source>
         <website>https://alivegr.app/</website>
-        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 04-10-2026[/I]
+        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 09-10-2026[/I]
+- PVR IPTV Simple Client bridge: automated setup with multi-instance support and custom M3U playlist generation
+- Greek XMLTV EPG integration and channel mapping (https://ext.greektv.app/epg/epg.xml.gz)
+- Live TV channel zapping: channel lineup is loaded into video playlist for instant next/previous channel switching
+- Synchronize M3U playlist and PVR manager automatically whenever user selects a stream preference in Live TV
+- Remove intrusive player repeat commands and add manual Kodi player repeat mode toggle in Developer settings
+- Add missing project links (Official Website, Ko-fi, Patreon) with dedicated iconography to Info section
 - Update live TV section with new channels, fewer groups, and new remote source
 - Support per-stream schema for live TV with individual DRM key and HTTP header pairs
 - Add "Choose Stream" context menu with persistent stream preference saving and silent fallback

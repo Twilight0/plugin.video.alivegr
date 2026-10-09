@@ -8,7 +8,7 @@
 import sys
 from xbmcaddon import Addon
 from ..modules.themes import iconname
-from ..modules.constants import ART_ID, PAYPAL, FORUM, TWITTER
+from ..modules.constants import ART_ID, PAYPAL, FORUM, TWITTER, KOFI, PATREON, ALIVEGR_WEB
 from ..modules.utils import changelog
 from tulip import kodi, directory
 
@@ -199,6 +199,18 @@ class Indexer:
             }
             ,
             {
+                'title': kodi.i18n(30510).format(separator),
+                'action': 'open_link',
+                'url': ALIVEGR_WEB,
+                'plot': 'AliveGR Official Website',
+                'icon': kodi.addonmedia(
+                    addonid=ART_ID, theme='icons', path='web.png'
+                ),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
                 'title': kodi.i18n(30260).format(separator),
                 'action': 'open_link',
                 'url': FORUM,
@@ -223,10 +235,34 @@ class Indexer:
             }
             ,
             {
+                'title': kodi.i18n(30511).format(separator),
+                'action': 'open_link',
+                'url': KOFI,
+                'plot': 'Ko-fi Support',
+                'icon': kodi.addonmedia(
+                    addonid=ART_ID, theme='icons', path='kofi.png'
+                ),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
+                'title': kodi.i18n(30512).format(separator),
+                'action': 'open_link',
+                'url': PATREON,
+                'plot': 'Patreon Support',
+                'icon': kodi.addonmedia(
+                    addonid=ART_ID, theme='icons', path='patreon.png'
+                ),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
                 'title': kodi.i18n(30141) + ': [COLOR cyan]' + PAYPAL + '[/COLOR]',
                 'action': 'open_link',
                 'url': PAYPAL,
-                'icon': kodi.addonmedia(addonid=ART_ID, theme='icons', path='kodi.png'),
+                'icon': kodi.addonmedia(addonid=ART_ID, theme='icons', path='paypal.png'),
                 'isFolder': 'False',
                 'isPlayable': 'False'
             }

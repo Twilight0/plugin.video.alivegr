@@ -31,8 +31,10 @@ ALIVEGR = (
 ########################################################################################################################
 
 WEBSITE = 'https://github.com/Twilight0/plugin.video.alivegr'
+ALIVEGR_WEB = 'https://alivegr.app/'
 FACEBOOK = 'https://www.facebook.com/alivegr/'
 TWITTER = 'https://x.com/TwilightZer0'
+KOFI = 'https://ko-fi.com/twilight0'
 PAYPAL = 'https://www.paypal.me/AliveGR'
 PATREON = 'https://www.patreon.com/twilight0'
 SUPPORT = 'https://github.com/Twilight0/plugin.video.alivegr/issues'
