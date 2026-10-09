@@ -491,6 +491,18 @@ class Indexer:
         # Store stream choice persistently
         set_stream_pref(title, choice)
 
+        # Update IPTV Simple M3U playlist ONLY if IPTV Simple has already been set up and is enabled
+        try:
+            from ..modules.constants import ALIVEGR_M3U
+            from ..modules.iptv import is_iptvsimple_installed, is_iptvsimple_enabled, generate_m3u_playlist, restart_pvr_manager
+            m3u_file = kodi.transPath(ALIVEGR_M3U)
+            if os.path.exists(m3u_file) and is_iptvsimple_installed() and is_iptvsimple_enabled():
+                generate_m3u_playlist()
+                restart_pvr_manager()
+        except Exception as e:
+            from tulip.log import log
+            log(f"Error updating M3U playlist on stream choice: {e}")
+
         # Subtle feedback to user
         clean_label = labels[choice].replace('[B]', '').replace('[/B]', '').lstrip('* ')
         msg = f"{title}: #{choice + 1} ({clean_label})"

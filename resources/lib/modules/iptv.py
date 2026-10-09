@@ -390,6 +390,8 @@ def generate_m3u_playlist(channels=None):
         return False
 
     proxy_port = get_proxy_port()
+    from .utils import get_all_stream_prefs, get_stream_pref
+    stream_prefs = get_all_stream_prefs()
 
     # Invert LIVE_GROUPS mapping for clean Greek/English group title lookup
     group_map = {}
@@ -422,8 +424,13 @@ def generate_m3u_playlist(channels=None):
         if not streams:
             continue
 
-        # Choose the best/primary stream for the channel
-        stream_entry = streams[0]
+        # Choose the user-preferred stream if selected in Live TV section, otherwise default to first
+        pref_idx = get_stream_pref(name, stream_prefs)
+        if pref_idx is not None and isinstance(pref_idx, int) and 0 <= pref_idx < len(streams):
+            stream_entry = streams[pref_idx]
+        else:
+            stream_entry = streams[0]
+
         final_url, props = format_stream_for_m3u(stream_entry, proxy_port)
 
         if not final_url:
