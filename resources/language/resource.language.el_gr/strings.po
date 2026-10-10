@@ -1782,5 +1782,14 @@ msgctxt "#30512"
 msgid "[COLOR white]Patreon:[/COLOR]{0}[COLOR cyan]patreon.com/twilight0[/COLOR]"
 msgstr "[COLOR white]Patreon:[/COLOR]{0}[COLOR cyan]patreon.com/twilight0[/COLOR]"
 
+msgctxt "#30513"
+msgid "Automatic fallback to working stream"
+msgstr "Αυτόματη εναλλαγή σε λειτουργική ροή"
+
+msgctxt "#30514"
+msgid "Automatically try alternative streams if the chosen or primary live stream is unavailable"
+msgstr "Αυτόματη δοκιμή εναλλακτικών ροών αν η επιλεγμένη ή κύρια ζωντανή ροή δεν είναι διαθέσιμη"
+
+
 
 

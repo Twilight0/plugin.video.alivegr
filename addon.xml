@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~beta4" provider-name="Twilight0">
+<addon id="plugin.video.alivegr" name="AliveGR" version="3.0.0~beta5" provider-name="Twilight0">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="resource.images.alivegr.artwork" version="3.0.6"/>
@@ -40,7 +40,7 @@ Kindly note that AliveGR is not an official part of the media player you are run
         <forum>https://github.com/Twilight0/plugin.video.alivegr/discussions</forum>
         <source>https://github.com/Twilight0/plugin.video.alivegr</source>
         <website>https://alivegr.app/</website>
-        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 09-10-2026[/I]
+        <news>+ [COLOR green]3.0.X series[/COLOR] [I]10-03-2026 - 10-10-2026[/I]
 - PVR IPTV Simple Client bridge: automated setup with multi-instance support and custom M3U playlist generation
 - Greek XMLTV EPG integration and channel mapping (https://ext.greektv.app/epg/epg.xml.gz)
 - Live TV channel zapping: channel lineup is loaded into video playlist for instant next/previous channel switching
@@ -62,7 +62,9 @@ Kindly note that AliveGR is not an official part of the media player you are run
 - Updated Privacy Policy and DMCA texts
 - Genres are now translated
 - Removed localhost HTTP proxy functionality and moved it to PluginsGR
-- Add more stream sources and refactor indexers to mix lists (temporarily removed, will add again with newer framework)</news>
+- Add more stream sources and refactor indexers to mix lists (temporarily removed, will add again with newer framework)
+- Added test suite
+- Refactored file operating modules for settings-related files to use storage.py module</news>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>

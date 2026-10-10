@@ -524,8 +524,9 @@ def player(url, params):
             log(f'Primary stream unavailable: {stream}')
             stream = None
 
-        # Fallback to secondary streams if initial stream fails
-        if not stream and candidate_streams and isinstance(candidate_streams, list) and len(candidate_streams) > 1:
+        # Fallback to secondary streams if initial stream fails and fallback is enabled (defaults to true)
+        allow_fallback = Addon().getSetting('live_stream_fallback') != 'false'
+        if not stream and allow_fallback and candidate_streams and isinstance(candidate_streams, list) and len(candidate_streams) > 1:
             def stream_reliability_key(s_entry):
                 u = s_entry.split('|')[0].lower()
                 # Direct unencrypted HLS is #1 priority

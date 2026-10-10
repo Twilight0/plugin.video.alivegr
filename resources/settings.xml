@@ -325,6 +325,11 @@
 						<heading>30291</heading>
 					</control>
 				</setting>
+				<setting id="live_stream_fallback" type="boolean" label="30513" help="30514">
+					<level>0</level>
+					<default>true</default>
+					<control type="toggle"/>
+				</setting>
 <!--				<setting id="preresolve_streams" type="boolean" label="30271" help="30443">-->
 <!--					<level>3</level>-->
 <!--					<default>false</default>-->
