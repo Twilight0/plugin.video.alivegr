@@ -104,6 +104,24 @@ class Indexer:
             }
             ,
             {
+                'title': kodi.i18n(30516),
+                'action': 'setup_various_keymaps',
+                'query': 'slideshow',
+                'icon': iconname('switcher'),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
+                'title': kodi.i18n(30310),
+                'action': 'setup_various_keymaps',
+                'query': 'samsung',
+                'icon': iconname('switcher'),
+                'isFolder': 'False',
+                'isPlayable': 'False'
+            }
+            ,
+            {
                 'title': kodi.i18n(30507),
                 'action': 'setup_iptv',
                 'icon': iconname('guide'),

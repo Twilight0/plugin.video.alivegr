@@ -24,8 +24,6 @@ from .storage import TextListStorage
 from tulip.kodi import update_repositories
 from os import path
 from time import time
-from base64 import b64decode
-from zlib import decompress, compress
 from scrapetube.wrapper import list_playlist_videos, list_playlists
 
 
@@ -83,6 +81,12 @@ def reset_idx(notify=True, forceit=False):
             kodi.infoDialog(message=kodi.i18n(30402), time=3000)
 
         log('Indexers have been reset')
+
+
+def papers():
+
+    kodi.execute('Dialog.Close(all)')
+    kodi.execute('ActivateWindow(10002,"plugin://plugin.video.alivegr/?content_type=image",return)')
 
 
 def activate_other_addon(url, query=None):
@@ -178,31 +182,6 @@ def refresh_and_clear():
     cache_clear()
     kodi.sleep(100)
     refresh()
-
-
-def thgiliwt(s):
-
-    string = s[::-1]
-
-    return b64decode(string)
-
-
-def pawsesac(s, ison=''):
-
-    string = s.swapcase()
-
-    string = string + ison
-    return string
-
-
-def bourtsa(s):
-
-    return decompress(s)
-
-
-def xteni(s):
-
-    return compress(s)
 
 
 def geo_loc():
@@ -426,6 +405,46 @@ def setup_various_keymaps(keymap):
 </keymap>'''
 
         location = kodi.join(keymap_settings_folder, 'samsung.xml')
+
+        lang_int = 30022
+
+        def seq():
+
+            with open(location, 'w') as f:
+                f.write(string)
+
+    elif keymap == 'slideshow':
+
+        string = """<keymap>
+    <SlideShow>
+        <keyboard>
+            <left>PreviousPicture</left>
+            <left mod="longpress">Left</left>
+            <right>NextPicture</right>
+            <right mod="longpress">Right</right>
+            <return>ZoomIn</return>
+            <return mod="longpress">ZoomNormal</return>
+            <enter>ZoomIn</enter>
+            <enter mod="longpress">ZoomNormal</enter>
+            <backspace>ZoomNormal</backspace>
+            <escape>PreviousMenu</escape>
+            <up>Up</up>
+            <down>Down</down>
+            <plus>ZoomIn</plus>
+            <minus>ZoomOut</minus>
+        </keyboard>
+        <remote>
+            <left>PreviousPicture</left>
+            <right>NextPicture</right>
+            <select>ZoomIn</select>
+            <back>ZoomNormal</back>
+            <up>Up</up>
+            <down>Down</down>
+        </remote>
+    </SlideShow>
+</keymap>"""
+
+        location = kodi.join(keymap_settings_folder, 'alivegr_slideshow.xml')
 
         lang_int = 30022
 

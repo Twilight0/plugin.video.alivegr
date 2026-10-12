@@ -179,11 +179,6 @@
 <!--					<default>true</default>-->
 <!--					<control type="toggle"/>-->
 <!--				</setting>-->
-<!--				<setting id="show_news" type="boolean" label="30151" help="">-->
-<!--					<level>0</level>-->
-<!--					<default>true</default>-->
-<!--					<control type="toggle"/>-->
-<!--				</setting>-->
 				<setting id="show_movies" type="boolean" label="30152" help="">
 					<level>0</level>
 					<default>true</default>
@@ -247,6 +242,11 @@
 				<setting id="show_bookmarks" type="boolean" label="30164" help="">
 					<level>0</level>
 					<default>true</default>
+					<control type="toggle"/>
+				</setting>
+				<setting id="show_news" type="boolean" label="30151" help="">
+					<level>0</level>
+					<default>false</default>
 					<control type="toggle"/>
 				</setting>
 				<setting id="show_settings" type="boolean" label="30165" help="">
@@ -330,6 +330,11 @@
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
+				<setting id="auto_channel_jump" type="boolean" label="30501" help="30502">
+					<level>0</level>
+					<default>true</default>
+					<control type="toggle"/>
+				</setting>
 <!--				<setting id="preresolve_streams" type="boolean" label="30271" help="30443">-->
 <!--					<level>3</level>-->
 <!--					<default>false</default>-->
@@ -366,11 +371,6 @@
 				</setting>
 				<setting id="check_streams" type="boolean" label="30297" help="30304">
 					<level>1</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="auto_channel_jump" type="boolean" label="30501" help="30502">
-					<level>0</level>
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
@@ -434,13 +434,13 @@
 					</control>
 				</setting>
 			</group>
-<!--			<group id="7" label="30041">-->
-<!--				<setting id="show_pic_switcher" type="boolean" label="30042" help="">-->
-<!--					<level>0</level>-->
-<!--					<default>true</default>-->
-<!--					<control type="toggle"/>-->
-<!--				</setting>-->
-<!--			</group>-->
+			<group id="7" label="30230">
+				<setting id="show_pic_switcher" type="boolean" label="30034" help="30453">
+					<level>0</level>
+					<default>true</default>
+					<control type="toggle"/>
+				</setting>
+			</group>
 		</category>
 		<category id="maintenance" label="30138" help="30433">
 			<group id="1">
@@ -640,18 +640,18 @@
 						<heading>VOD Group</heading>
 					</control>
 				</setting>
-<!--				<setting id="papers_group" type="string" label="Papers Group" help="">-->
-<!--					<level>0</level>-->
-<!--					<default>0</default>-->
-<!--					<dependencies>-->
-<!--						<dependency type="visible">-->
-<!--							<condition on="property" name="InfoBool">false</condition>-->
-<!--						</dependency>-->
-<!--					</dependencies>-->
-<!--					<control type="edit" format="string">-->
-<!--						<heading>Papers Group</heading>-->
-<!--					</control>-->
-<!--				</setting>-->
+				<setting id="papers_group" type="string" label="Papers Group" help="">
+					<level>0</level>
+					<default>0</default>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>Papers Group</heading>
+					</control>
+				</setting>
 				<setting id="last_check" type="string" label="Last update check" help="">
 					<level>0</level>
 					<default>0</default>

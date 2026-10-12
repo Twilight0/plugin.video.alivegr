@@ -56,13 +56,7 @@ class Indexer:
             #     'show_item': kodi.setting('show_networks') == 'true'
             # }
             # ,
-            # {
-            #     'title': kodi.i18n(30123),
-            #     'action': 'news',
-            #     'icon': iconname('news'),
-            #     'show_item': kodi.setting('show_news') == 'true'
-            # }
-            # ,
+
             {
                 'title': kodi.i18n(30031),
                 'action': 'movies',
@@ -165,6 +159,14 @@ class Indexer:
                 'icon': iconname('bookmarks'),
                 'show_item': self.get_setting('show_bookmarks') == 'true',
                 'isFolder': 'True', 'isPlayable': 'False'
+            }
+            ,
+            {
+                'title': kodi.i18n(30230),
+                'action': 'news',
+                'icon': iconname('news'),
+                'show_item': self.get_setting('show_news') == 'true',
+                'isFolder': 'False', 'isPlayable': 'False'
             }
             ,
             {

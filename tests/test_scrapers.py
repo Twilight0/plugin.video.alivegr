@@ -83,5 +83,63 @@ class TestScrapers(unittest.TestCase):
         self.assertGreater(len(country), 0)
 
 
+    def test_frontpages_parser(self):
+        """Verifies parsing of frontpages.gr HTML structure."""
+        from domparsers import parseDOM
+        from urllib.parse import urljoin
+
+        sample_html = '''
+        <div id="General" class="tabbertab">
+            <div class="thumber" style="display:inline-block;">
+                <div class="paperInfo"><span>Sample Headline</span></div>
+                <div class="paperName"><a href="/protoselida/1/Sample">Sample Paper</a></div>
+                <a class="coverPageLink" href="/protoselida/20261012/1/Sample">
+                    <img src="/data/2026/20261012/Sample300.jpg" alt="Sample Alt" />
+                </a>
+                <button class="coverZoomButton" data-full-src="/data/2026/20261012/SampleI.jpg"></button>
+            </div>
+        </div>
+        <div id="Magazines" class="tabbertab">
+            <div class="thumber">
+                <div class="paperName">Magazine One</div>
+                <img src="/data/2026/20261012/Mag300.jpg" alt="Mag One" />
+            </div>
+        </div>
+        '''
+
+        fp_link = 'https://www.frontpages.gr'
+        groups = parseDOM(sample_html, 'div', attrs={'class': 'tabbertab'})
+        self.assertEqual(len(groups), 2)
+
+        items = []
+        for group, papers in enumerate(groups):
+            thumbers = parseDOM(papers, 'div', attrs={'class': 'thumber'})
+            for i in thumbers:
+                btn = parseDOM(i, 'button', attrs={'class': 'coverZoomButton'}, ret='data-full-src')
+                imgs = parseDOM(i, 'img', ret='src')
+                self.assertTrue(bool(imgs))
+                image = urljoin(fp_link, imgs[0])
+                if btn and btn[0]:
+                    link = urljoin(fp_link, btn[0])
+                else:
+                    link = image.replace('300.jpg', 'I.jpg')
+
+                paper_names = parseDOM(i, 'div', attrs={'class': 'paperName'})
+                if paper_names:
+                    links = parseDOM(paper_names[0], 'a')
+                    title = links[0] if links else paper_names[0]
+                else:
+                    title = 'Fallback'
+                items.append({'title': title, 'image': image, 'url': link, 'group': group})
+
+        self.assertEqual(len(items), 2)
+        self.assertEqual(items[0]['title'], 'Sample Paper')
+        self.assertEqual(items[0]['url'], 'https://www.frontpages.gr/data/2026/20261012/SampleI.jpg')
+        self.assertEqual(items[0]['group'], 0)
+        self.assertEqual(items[1]['title'], 'Magazine One')
+        self.assertEqual(items[1]['url'], 'https://www.frontpages.gr/data/2026/20261012/MagI.jpg')
+        self.assertEqual(items[1]['group'], 1)
+
+
 if __name__ == '__main__':
     unittest.main()

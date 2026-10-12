@@ -1155,8 +1155,8 @@ msgid "[B]Live streams:[/B] ({0})"
 msgstr "[B]Ζωντανές ροές:[/B] ({0})"
 
 msgctxt "#30318"
-msgid "Change skin"
-msgstr "Αλλαγή κελύφους"
+msgid "Change Kodi skin"
+msgstr "Αλλαγή κελύφους Kodi"
 
 msgctxt "#30319"
 msgid "Open system settings"
@@ -1793,3 +1793,15 @@ msgstr "Αυτόματη δοκιμή εναλλακτικών ροών αν η 
 
 
 
+
+msgctxt "#30515"
+msgid "Magazines"
+msgstr "Περιοδικά"
+
+msgctxt "#30516"
+msgid "Add keymap for picture slideshow navigation"
+msgstr "Προσθήκη χάρτη πλήκτρων για την προβολή εικόνων"
+
+msgctxt "#30517"
+msgid "Setup keymap for newspaper/picture viewing (Left/Right flips pictures, Enter zooms in, arrows pan)"
+msgstr "Ρύθμιση χάρτη πλήκτρων για προβολή εφημερίδων/εικόνων (Αριστερά/Δεξιά αλλάζει εικόνα, Enter μεγεθύνει, βέλη μετακινούν)"

@@ -6,15 +6,13 @@ Tests for endpoints, URLs, and network connectivity in AliveGR.
 import unittest
 import urllib.request
 import json
-import base64
 
 import tests.harness  # noqa: F401 bootstrap Kodi mock
 
 from resources.lib.modules.constants import (
     ALIVEGR, M3U_LINK, GM_BASE, PLAYLIST_BASE, GREEK_EPG_XML,
-    WEBSITE, ALIVEGR_WEB, PATREON, KOFI, PAYPAL
+    WEBSITE, ALIVEGR_WEB
 )
-from resources.lib.modules.utils import thgiliwt
 
 
 class TestEndpoints(unittest.TestCase):
@@ -29,15 +27,12 @@ class TestEndpoints(unittest.TestCase):
             return data
 
     def test_live_json_endpoint(self):
-        """Test the remote Live Channels JSON gist."""
-        raw_url = thgiliwt('=' + ALIVEGR)
-        live_json_url = raw_url.decode('utf-8') if isinstance(raw_url, bytes) else raw_url
-        self.assertTrue(live_json_url.startswith('https://'))
-        raw_data = self._check_url(live_json_url, min_bytes=50000)
-        parsed = json.loads(raw_data.decode('utf-8'))
-        self.assertIn('channels', parsed)
-        self.assertGreater(len(parsed['channels']), 50)
-        self.assertIn('updated', parsed)
+        """Test the remote Live Channels Cloudflare API gateway."""
+        gateway_data = self._check_url(ALIVEGR, min_bytes=50000)
+        parsed_gw = json.loads(gateway_data.decode('utf-8'))
+        self.assertIn('channels', parsed_gw)
+        self.assertGreater(len(parsed_gw['channels']), 50)
+        self.assertIn('updated', parsed_gw)
 
     def test_greekstreamtv_m3u(self):
         """Test the fallback Greekstreamtv M3U endpoint."""

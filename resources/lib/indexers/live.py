@@ -12,8 +12,7 @@ from datetime import datetime
 from tulip import directory, kodi, cleantitle
 from netclient import Net
 from useragents import get_ua
-from tulip.utils import py3_dec
-from ..modules.utils import thgiliwt, pinned_from_file, get_all_stream_prefs, set_stream_pref, get_stream_pref
+from ..modules.utils import pinned_from_file, get_all_stream_prefs, set_stream_pref, get_stream_pref
 from ..modules.themes import iconname
 from ..modules.constants import LIVE_GROUPS, cache_method, cache_duration, M3U_LINK, PINNED, ALIVEGR
 
@@ -117,17 +116,8 @@ class Indexer:
     def live(self):
 
         if kodi.setting('debug') == 'false':
-
-            result = Net().http_GET(
-                py3_dec(thgiliwt('=' + ALIVEGR))
-            ).content
-
-            # result = Net().http_GET('https://pastebin.com/raw/YxxuQEtP').content
-
-            # result = bourtsa(b64decode(result))
-
+            result = Net().http_GET(ALIVEGR).content
         else:
-
             if kodi.setting('local_remote') == '0':
                 local = kodi.setting('live_local')
                 with open(local, encoding='utf-8') as _json:
@@ -135,8 +125,7 @@ class Indexer:
             elif kodi.setting('local_remote') == '1':
                 result = Net().http_GET(kodi.setting('live_remote')).content
             else:
-                result = Net().http_GET(py3_dec(thgiliwt('=' + ALIVEGR))).content
-                # result = bourtsa(b64decode(result))
+                result = Net().http_GET(ALIVEGR).content
 
         try:
             channels = json.loads(result)
@@ -496,7 +485,7 @@ class Indexer:
             from ..modules.constants import ALIVEGR_M3U
             from ..modules.iptv import is_iptvsimple_installed, is_iptvsimple_enabled, generate_m3u_playlist, restart_pvr_manager
             m3u_file = kodi.transPath(ALIVEGR_M3U)
-            if os.path.exists(m3u_file) and is_iptvsimple_installed() and is_iptvsimple_enabled():
+            if kodi.exists(m3u_file) and is_iptvsimple_installed() and is_iptvsimple_enabled():
                 generate_m3u_playlist()
                 restart_pvr_manager()
         except Exception as e:

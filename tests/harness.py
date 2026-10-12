@@ -171,8 +171,17 @@ sys.modules['xbmcvfs'] = make_mod(
 
 sys.modules['xbmcaddon'] = make_mod('xbmcaddon', Addon=MockAddon)
 
-# Add vendor & module dependencies from local Kodi addons
+# Add vendor & module dependencies from local dev libraries and Kodi addons
+DEV_LIBS_DIR = '/home/twilight/Development/repository.twilight0.libs/addons_dir'
 addon_paths = [
+    os.path.join(DEV_LIBS_DIR, 'script.module.tulip', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.netclient', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.unicache', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.parsers', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.scrapetube', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.fuzzywuzzy', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.m3u8', 'resources', 'lib'),
+    os.path.join(DEV_LIBS_DIR, 'script.module.urldispatcher', 'resources', 'lib'),
     '/home/twilight/.kodi/addons/script.module.six/lib',
     '/home/twilight/.kodi/addons/script.module.kodi-six/libs',
     '/home/twilight/.kodi/addons/script.module.certifi/lib',
@@ -180,12 +189,8 @@ addon_paths = [
     '/home/twilight/.kodi/addons/script.module.idna/lib',
     '/home/twilight/.kodi/addons/script.module.urllib3/lib',
     '/home/twilight/.kodi/addons/script.module.requests/lib',
-    '/home/twilight/.kodi/addons/script.module.parsers/resources/lib',
-    '/home/twilight/.kodi/addons/script.module.unicache/resources/lib',
+    '/home/twilight/Development/Kodi_libs/script.common.plugin.cache/resources/lib/storage_server',
     '/home/twilight/.kodi/addons/script.common.plugin.cache/resources/lib/storage_server',
-    '/home/twilight/.kodi/addons/script.module.netclient/resources/lib',
-    '/home/twilight/.kodi/addons/script.module.scrapetube/resources/lib',
-    '/home/twilight/.kodi/addons/script.module.fuzzywuzzy/resources/lib',
     '/home/twilight/.kodi/addons/script.module.tulip/resources/lib',
 ]
 

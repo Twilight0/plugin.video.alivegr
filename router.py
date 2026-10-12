@@ -10,7 +10,7 @@ from urllib.parse import parse_qsl
 
 from resources.lib.modules import utils, helpers, player, iptv
 from resources.lib.indexers import (
-    navigator, settings, live, vod, kids, music, bookmarks, search
+    navigator, settings, live, vod, kids, music, bookmarks, search, news
 )
 from resources.lib.modules.constants import SEARCH_HISTORY, PLAYBACK_HISTORY
 
@@ -33,6 +33,10 @@ def route():
 
         navigator.Indexer().root()
 
+    elif content == 'image':
+
+        news.Indexer().papers_index()
+
     elif content == 'audio':
 
         music.Indexer().menu()
@@ -53,6 +57,22 @@ def route():
     elif action == 'generic_index':
 
         navigator.Indexer().generic(query)
+
+    elif action == 'news':
+
+        utils.papers()
+
+    elif action == 'papers':
+
+        utils.papers()
+
+    elif action == 'papers_index':
+
+        news.Indexer().papers_index()
+
+    elif action == 'papers_switcher':
+
+        news.Indexer().switcher()
 
     elif action == 'live_tv':
 

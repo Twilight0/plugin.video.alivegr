@@ -1155,7 +1155,7 @@ msgid "[B]Live streams:[/B] ({0})"
 msgstr ""
 
 msgctxt "#30318"
-msgid "Change skin"
+msgid "Change Kodi skin"
 msgstr ""
 
 msgctxt "#30319"
@@ -1793,3 +1793,15 @@ msgstr ""
 
 
 
+
+msgctxt "#30515"
+msgid "Magazines"
+msgstr ""
+
+msgctxt "#30516"
+msgid "Add keymap for picture slideshow navigation"
+msgstr ""
+
+msgctxt "#30517"
+msgid "Setup keymap for newspaper/picture viewing (Left/Right flips pictures, Enter zooms in, arrows pan)"
+msgstr ""

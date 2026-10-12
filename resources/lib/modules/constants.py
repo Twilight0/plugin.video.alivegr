@@ -23,10 +23,7 @@ PLUGINS_ID = 'script.module.resolveurl.pluginsgr'
 PLUGINS_PATH = 'special://home/addons/{0}/resources/plugins/'.format(PLUGINS_ID)
 YT_URL = 'https://www.youtube.com/watch?v='
 PLAY_ACTION = '?action=play&url='
-ALIVEGR = (
-    '42bzpmLoN2Xyd2L3FmcvYmY0IGN3YmZ2QDZ0EGN4EWMwQGOzcDZxYGZ1EjYyUzYvADdodWasl2dU9SbvNmL05WZ052bj'
-    'JXZzVnY1hGdpdmL0NXan9yL6MHc0RHa'
-)
+ALIVEGR = 'https://api.alivegr.app/v1/channels'
 
 ########################################################################################################################
 
@@ -120,6 +117,7 @@ SEARCH_HISTORY = join(dataPath, 'search_history.csv')
 PLAYBACK_HISTORY = join(dataPath, 'playback_history.list')
 STREAM_PREFS = join(dataPath, 'stream_preferences.json')
 ALIVEGR_M3U = join(dataPath, 'alivegr.m3u')
+FRONTPAGES_BASE = 'https://www.frontpages.gr'
 GREEK_EPG_XML = 'https://ext.greektv.app/epg/epg.xml.gz'
 
 ########################################################################################################################
